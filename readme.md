@@ -1,6 +1,6 @@
 **All in one Windows installer  for Signal K server node http://signalk.org/**  
 This content is work in progress...
-  
+___  
 **Prerequisite:**  
 - Internet connection during setup process  
   
