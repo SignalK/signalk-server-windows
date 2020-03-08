@@ -60,7 +60,7 @@ Or ask for support at http://slack-invite.signalk.org/
     - `signalkhome` home directory of Signal K server.  
         - `.signalk` The configuration of your server is stored in this folder
   
-The tools to manage server (located in `tools` directory):  
+**The tools to manage server (located in `tools` directory):**  
 - `SignalK-CLI.lnk` will open a command line windows with environment prepared for running Signal K.  
 - `start-signalk-server-services.cmd` will start the Signal K service if you choosed it at install, you must `Run as administrator` this script.  
 - `stop-signalk-server-services.cmd` will stop the Signal K service if you choosed it at install, you must `Run as administrator` this script.  
