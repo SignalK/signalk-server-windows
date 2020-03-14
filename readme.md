@@ -5,9 +5,10 @@ ___
 - Internet connection during setup process  
   
 **What's provide with this installer:**  
-- node js 10.19.0 ( from https://nodejs.org/dist/latest-v10.x/ ).  
+- The latest version of the Signal K server downloaded during installation.  
+- node js 10.19.0 ( downloaded from http://nodejs.org/dist/v10.19.0/ during installation).  
 - openssl 1.1.1d ( from https://slproweb.com/products/Win32OpenSSL.html ).  
-- support for X64 and X86 Windows version (X86 version not tested yet).  
+- support of X64 and X86 Windows version (X86 version not tested yet).  
 - All packages are installed under a root directory. You choose your root directory at the time of installation.  
 - Signal K can start as windows service if you choose it at the time of installation.  
 - You can re-run the installer several times.  
@@ -28,8 +29,8 @@ Instead, choose `c:\signalk` or `d:\signalk`.
 If you select `Signal K as services` a Windows service will be created with Administrator rights and you will not need to keep a window open to run the server.  
 ![Install-SelectComponents](screenshots/Install-SelectComponents.png)  
   
-- Click `Install` button  
-![Install-Progress](screenshots/Install-Progress.png)  
+- Then click `Install` button  
+![Install-Progress](screenshots/Install-Progress-Download-nodejs.png)  
   
 - Several windows will open successively during the installation.  
 If you chose `Singal K as services` 3 message box will open asking for permission to install the Windows service.  
@@ -37,8 +38,8 @@ Answer with `OK`.
 ![Install-Progress-NPM-SignalK](screenshots/Install-Progress-NPM-SignalK.png)  
 ![Install-Progress-NPM-node-windows](screenshots/Install-Progress-NPM-node-windows.png)  
   
-- At the end, close the installer with `Finish`button.  
-![Install-Finish](screenshots/Install-Finish.png)  
+- At the end, check log if no errors and close the installer with `Close` button.  
+![Install-Finished](screenshots/Install-Finished.png)..
   
 Your Signal K server is now installed.  
 If you have select `Desktop shortcuts`, you will find 2 icons on your desktop:  
