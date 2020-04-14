@@ -14,7 +14,7 @@ ___
 - You can re-run the installer several times.  
   
 **How to install Signal K server node:**  
-- Download installer at https://github.com/cmotelet/signalk-server-windows/blob/master/output/signalk-server-setup.exe  
+- Download installer at https://github.com/SignalK/signalk-server-windows/blob/master/output/signalk-server-setup.exe  
 - Execute `signalk-server-setup.exe`.  
 Some anti-virus software considers that there are viruses in the installer. These are false positives.  
 You may need to add the installer in your exceptions, it is sometimes quarantined.  
