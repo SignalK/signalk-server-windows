@@ -48,7 +48,12 @@ If you have select `Desktop shortcuts`, you will find 2 icons on your desktop:
 - `Start Signal K Service` icon will start the Signal K service if you choosed it at install, you must `Run as administrator` this icon.  
 - `Signal K CLI` will open a command line windows with environment prepared for running Signal K.  
   
-When Signal K server started by service or by CLI, open you web browser at URL: http://localhost:3000  
+If you chose `Signal K as services`, the service is in `manual` mode after installation, to prevent the Signal K server from starting every time you start your computer.  
+In this case, start the service using the shortcut on the desktop `Start Signal K Service` or by the script `start-signalk-server-services.cmd` in tools directory.  
+Caution, these commands must be `Run as administrator`.  
+  
+When the Signal K server has started by service or CLI, wait 20 to 30 seconds for the server to finish booting.  
+Then open you web browser at URL: http://localhost:3000  
   
 Then check out the website:  http://signalk.org/ or https://github.com/SignalK/signalk-server-node for more informations.  
 Or ask for support at http://slack-invite.signalk.org/
