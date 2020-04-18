@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.2.0"
+  !define INST_VERSION "0.3.0"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup.exe"
@@ -58,6 +58,16 @@
     StrCpy $NODE64_ORG_DIR 'node-v10.19.0-win-x64'
     StrCpy $NODE86_ORG_DIR 'node-v10.19.0-win-x86'
   FunctionEnd
+
+  !macro CreateInternetShortcutWithIcon FILEPATH URL ICONPATH ICONINDEX
+    WriteINIStr "${FILEPATH}" "InternetShortcut" "URL" "${URL}"
+    WriteINIStr "${FILEPATH}" "InternetShortcut" "IconIndex" "${ICONINDEX}"
+    WriteINIStr "${FILEPATH}" "InternetShortcut" "IconFile" "${ICONPATH}"
+    WriteINIStr "${FILEPATH}" "InternetShortcut" "HotKey" "0"
+    WriteINIStr "${FILEPATH}" "InternetShortcut" "IDList" ""
+    WriteINIStr "${FILEPATH}" "{000214A0-0000-0000-C000-000000000046}" "Prop3" "19,2"
+  !macroend
+
 ;======================================================
   Function .onInit
     SetDetailsView show
@@ -173,7 +183,7 @@
     FileOpen  $9  $TOOLS_PATH\create-signalk-server-services.cmd w
     FileWrite $9 '@ECHO OFF$\r$\n'
     FileWrite $9 '$INSTALL_DRIVE$\r$\n'
-    FileWrite $9 'echo "Install signalk as service in progress..."$\r$\n'
+    FileWrite $9 'echo Install signalk as service in progress...$\r$\n'
     FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
     FileWrite $9 'set "PATH=%NODE_PATH%;%~dp0;%PATH%"$\r$\n'
     FileWrite $9 'cd $TOOLS_PATH$\r$\n'
@@ -181,7 +191,7 @@
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
     FileWrite $9 'exit 0$\r$\n'
     FileWrite $9 ':ERROR$\r$\n'
-    FileWrite $9 'echo "An ERROR has occurred."$\r$\n'
+    FileWrite $9 'echo An ERROR has occurred.$\r$\n'
     FileWrite $9 'pause$\r$\n'
     FileWrite $9 'exit 1$\r$\n'
     FileWrite $9 '$\r$\n'
@@ -190,12 +200,12 @@
     DetailPrint "Create $TOOLS_PATH\stop-signalk-server-services.cmd"
     FileOpen  $9  $TOOLS_PATH\stop-signalk-server-services.cmd w
     FileWrite $9 '@ECHO OFF$\r$\n'
-    FileWrite $9 'echo "Stop Signal K service..."$\r$\n'
+    FileWrite $9 'echo Stop Signal K service...$\r$\n'
     FileWrite $9 'net stop "signalkservernode.exe"$\r$\n'
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
     FileWrite $9 'exit 0$\r$\n'
     FileWrite $9 ':ERROR$\r$\n'
-    FileWrite $9 'echo "An ERROR has occurred."$\r$\n'
+    FileWrite $9 'echo An ERROR has occurred.$\r$\n'
     FileWrite $9 'pause$\r$\n'
     FileWrite $9 'exit 1$\r$\n'
     FileWrite $9 '$\r$\n'
@@ -204,12 +214,21 @@
     DetailPrint "Create $TOOLS_PATH\start-signalk-server-services.cmd"
     FileOpen  $9  $TOOLS_PATH\start-signalk-server-services.cmd w
     FileWrite $9 '@ECHO OFF$\r$\n'
-    FileWrite $9 'echo "Start Signal K service..."$\r$\n'
+    FileWrite $9 'echo Start Signal K service...$\r$\n'
+    FileWrite $9 'net user %USERNAME% /active:yes  >nul 2>&1$\r$\n'
+    FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR_ADMIN$\r$\n'
+    FileWrite $9 'goto :STOP_SERVICE$\r$\n'
+    FileWrite $9 ':ERROR_ADMIN$\r$\n'
+    FileWrite $9 'echo ERROR: This command must be "Run as Administrator"$\r$\n'
+    FileWrite $9 'pause$\r$\n'
+    FileWrite $9 'exit 1$\r$\n'
+    FileWrite $9 ':STOP_SERVICE$\r$\n'
+    FileWrite $9 'net stop "signalkservernode.exe" >nul 2>&1$\r$\n'
     FileWrite $9 'net start "signalkservernode.exe"$\r$\n'
-    FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
+    FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR_START$\r$\n'
     FileWrite $9 'exit 0$\r$\n'
-    FileWrite $9 ':ERROR$\r$\n'
-    FileWrite $9 'echo "An ERROR has occurred."$\r$\n'
+    FileWrite $9 ':ERROR_START$\r$\n'
+    FileWrite $9 'echo An ERROR has occurred.$\r$\n'
     FileWrite $9 'pause$\r$\n'
     FileWrite $9 'exit 1$\r$\n'
     FileWrite $9 '$\r$\n'
@@ -219,7 +238,7 @@
     FileOpen  $9  $TOOLS_PATH\npm-install-node-windows.cmd w
     FileWrite $9 '@ECHO OFF$\r$\n'
     FileWrite $9 '$INSTALL_DRIVE$\r$\n'
-    FileWrite $9 'echo "Install node-windows package in progress..."$\r$\n'
+    FileWrite $9 'echo Install node-windows package in progress...$\r$\n'
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
     FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
     FileWrite $9 'set "Path=%NODE_PATH%;%~dp0;%Path%"$\r$\n'
@@ -228,7 +247,7 @@
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
     FileWrite $9 'exit 0$\r$\n'
     FileWrite $9 ':ERROR$\r$\n'
-    FileWrite $9 'echo "An ERROR has occurred."$\r$\n'
+    FileWrite $9 'echo An ERROR has occurred.$\r$\n'
     FileWrite $9 'pause$\r$\n'
     FileWrite $9 'exit 1$\r$\n'
     FileWrite $9 '$\r$\n'
@@ -238,7 +257,7 @@
     FileOpen  $9  $TOOLS_PATH\npm-install-signalk-server.cmd w
     FileWrite $9 '@ECHO OFF$\r$\n'
     FileWrite $9 '$INSTALL_DRIVE$\r$\n'
-    FileWrite $9 'echo "Install signalk-server package in progress..."$\r$\n'
+    FileWrite $9 'echo Install signalk-server package in progress...$\r$\n'
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
     FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
     FileWrite $9 'set "Path=%NODE_PATH%;%~dp0;%Path%"$\r$\n'
@@ -247,7 +266,7 @@
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
     FileWrite $9 'exit 0$\r$\n'
     FileWrite $9 ':ERROR$\r$\n'
-    FileWrite $9 'echo "An ERROR has occurred."$\r$\n'
+    FileWrite $9 'echo An ERROR has occurred.$\r$\n'
     FileWrite $9 'pause$\r$\n'
     FileWrite $9 'exit 1$\r$\n'
     FileWrite $9 '$\r$\n'
@@ -257,6 +276,9 @@
     CreateShortCut "$TOOLS_PATH\SignalK-CLI.lnk" "cmd" \
       "/k $TOOLS_PATH\signalk-server-cli.cmd" "$TOOLS_PATH\signalk.ico" 0 SW_SHOWNORMAL \
       "" "Signal K CLI"
+
+    DetailPrint "Create $TOOLS_PATH\SignalK GUI shortcut"
+    !insertmacro CreateInternetShortcutWithIcon "$TOOLS_PATH\SignalK GUI.URL" "http://localhost:3000" "$TOOLS_PATH\signalk.ico" 0
   FunctionEnd
 ;======================================================
   Section "Extract nodejs" SecExtractJS
@@ -305,10 +327,17 @@
   Section "Generate tools" SecTools
 ;    SectionIn RO
     Call SetGlobalVars
+    DetailPrint "Install tools files"
     SetOutPath $INSTDIR\signalkhome
     File /nonfatal /r "..\target\signalkhome\*.*"
     SetOutPath $INSTDIR\tools
     File /nonfatal /r "..\target\tools\*.*"
+    SetOutPath $INSTDIR\screenshots
+    File /nonfatal /r "..\screenshots\*.png"
+    SetOutPath $INSTDIR
+    File /nonfatal /r "..\target\readme.html"
+    ExecWait '"$TOOLS_PATH\npm-install-node-windows.cmd"' $0
+    DetailPrint "npm install -g --unsafe-perm  node-windows returned $0"
     Call GenToolsFiles
   SectionEnd
 
@@ -318,24 +347,29 @@
     DetailPrint "npm install -g --unsafe-perm  signalk-server returned $0"
   SectionEnd
 
-  Section /o "Signal K as services" SecSkService
+  Section "Signal K as services" SecSkService
     Call SetGlobalVars
-    ExecWait '"$TOOLS_PATH\npm-install-node-windows.cmd"' $0
-    DetailPrint "npm install -g --unsafe-perm  node-windows returned $0"
-
     ExecWait '"$TOOLS_PATH\create-signalk-server-services.cmd"' $0
     DetailPrint "Install Signal K as windows services returned $0"
   SectionEnd
 
   SectionGroup /e "Desktop shortcut" SecShortcuts
-    Section /o "Start service" SecStartService
+    Section "Start service" SecStartService
       Call SetGlobalVars
+      DetailPrint "Create desktop shortcut 'Start Signal K Service'"
       CreateShortCut "$DESKTOP\Start Signal K Service.lnk" "$TOOLS_PATH\start-signalk-server-services.cmd" \
         "" "$TOOLS_PATH\signalk.ico" 0 SW_SHOWNORMAL \
         "" "Start Signal K Service"
     SectionEnd
+    Section "Signal Web GUI" SecSignalkWebGUI
+      Call SetGlobalVars
+      DetailPrint "Create desktop shortcut 'SignalK-GUI'"
+      !insertmacro CreateInternetShortcutWithIcon "$DESKTOP\SignalK-GUI.URL" "http://localhost:3000" "$TOOLS_PATH\signalk.ico" 0
+    SectionEnd
+
     Section /o "Signal K CLI" SecSignalkCli
       Call SetGlobalVars
+      DetailPrint "Create desktop shortcut 'Signal K CLI'"
       CreateShortCut "$DESKTOP\Signal K CLI.lnk" "cmd" \
         "/k $TOOLS_PATH\signalk-server-cli.cmd" "$TOOLS_PATH\signalk.ico" 0 SW_SHOWNORMAL \
         "" "Signal K CLI"
@@ -350,7 +384,23 @@ SectionGroupEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSkInstall}    "Install the lastest version of Signal K server node from npm repository (Internet access required)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSkService}    "Install Signal as Windows service (Internet access required)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts}    "Create desktop shortcut"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecStartService} "Desktop shortcut to start Signal K service"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSignalkCli}   "Desktop shortcut to open nodejs console for run Signal K server"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecStartService} "Desktop shortcut to start Signal K service.$\n'Signal K as services' must be selected"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSignalkCli}   "Desktop shortcut to open nodejs console for run Signal K as standalone server.$\nOnly for advanced users"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSignalkWebGUI}   "Desktop shortcut to open the web GUI of Signal K server"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 ;======================================================
+
+Function .onSelChange
+  ${If} $0 != ${SecSkService}
+    Return
+  ${EndIf}
+  SectionGetFlags ${SecSkService} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  IntCmp $0 ${SF_SELECTED} enableShortCut disableShortCut
+  enableShortCut:
+  SectionSetFlags ${SecStartService} ${SF_SELECTED}
+  goto end
+  disableShortCut:
+  SectionSetFlags ${SecStartService} ${SF_RO}
+  end:
+FunctionEnd
