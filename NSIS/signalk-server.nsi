@@ -14,7 +14,7 @@
   !define INST_VERSION "0.3.1"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
-  OutFile "..\output\signalk-server-setup.exe"
+  OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
   InstallDir "c:\signalk"
   RequestExecutionLevel user ; user | admin 
   !define MUI_ICON "..\target\tools\signalk.ico"

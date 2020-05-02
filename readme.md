@@ -15,8 +15,8 @@ ___
 - HTML installation help built with https://markdowntohtml.com/
   
 **How to install Signal K server node:**  
-- Download installer at https://github.com/SignalK/signalk-server-windows/blob/master/output/signalk-server-setup.exe  
-- Execute `signalk-server-setup.exe`.  
+- Download installer at https://github.com/SignalK/signalk-server-windows/releases/download/v0.3.1/signalk-server-setup-0.3.1.exe  
+- Execute `signalk-server-setup-0.3.1.exe`.  
 Some anti-virus software considers that there are viruses in the installer. These are false positives.  
 You may need to add the installer in your exceptions, it is sometimes quarantined.  
 Please submit this file to your anti-virus support for scanning and whitelisting.  
