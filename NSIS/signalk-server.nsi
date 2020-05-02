@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.3.0"
+  !define INST_VERSION "0.3.1"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup.exe"
@@ -336,9 +336,9 @@
     File /nonfatal /r "..\screenshots\*.png"
     SetOutPath $INSTDIR
     File /nonfatal /r "..\target\readme.html"
+    Call GenToolsFiles
     ExecWait '"$TOOLS_PATH\npm-install-node-windows.cmd"' $0
     DetailPrint "npm install -g --unsafe-perm  node-windows returned $0"
-    Call GenToolsFiles
   SectionEnd
 
   Section "install signalk-server" SecSkInstall
