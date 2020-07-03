@@ -94,7 +94,7 @@ Or ask for support at http://slack-invite.signalk.org/ in channel #support-windo
 - You can then safely delete the root directory e.g. `c:\signalk`  
 - And that's all !  
   
-**Rebuild install kit
+**Rebuild install kit:**  
 - Clone Github project: `git clone https://github.com/SignalK/signalk-server-windows.git`  
 - Install `nsis-3.05-setup.exe` located in download folder.  
 - Extract `Nsis7z_19.00.7z`  
