@@ -6,7 +6,7 @@ ___
   
 **What's provide with this installer:**  
 - The latest version of the Signal K server downloaded during installation.  
-- node js 10.19.0 ( downloaded from http://nodejs.org/dist/v10.19.0/ during installation).  
+- node js 10.19.0 ( downloaded from https://nodejs.org/dist/v10.19.0/ during installation).  
 - openssl 1.1.1d ( from https://slproweb.com/products/Win32OpenSSL.html ).  
 - support of X64 and X86 Windows version (Windows 10 X64 and Windows 7 X86 tested).  
 - All packages are installed under a root directory. You choose your root directory at the time of installation.  
@@ -93,3 +93,15 @@ Or ask for support at http://slack-invite.signalk.org/ in channel #support-windo
 - First of all, if you installed as service, `Run as administrator` the `remove-signalk-server-services.cmd` script in tools dirrectory.  
 - You can then safely delete the root directory e.g. `c:\signalk`  
 - And that's all !  
+  
+**Rebuild install kit
+- Clone Github project: `git clone https://github.com/SignalK/signalk-server-windows.git`  
+- Install `nsis-3.05-setup.exe` located in download folder.  
+- Extract `Nsis7z_19.00.7z`  
+- Copy `Plugins\x86-ansi` & `Plugins\x86-unicode` content in the Plugins folder of NSIS install directory.  
+- Extract `Inetc.zip`  
+- Copy `Plugins\x86-ansi` & `Plugins\x86-unicode` content in the Plugins folder of NSIS install directory.  
+- Run NSIS.  
+- Open `NSIS\signalk-server.nsi` file in NSIS.  
+- Select `Script` `Recompile`
+- The new compiled install kit is located in `output`directory.  

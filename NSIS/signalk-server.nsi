@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.3.1"
+  !define INST_VERSION "0.3.2"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -53,8 +53,8 @@
     StrCpy $OPENSSL_PATH '$INSTDIR\openssl'
     StrCpy $OPENSSL_BIN_PATH '$INSTDIR\openssl\bin'
     StrCpy $TOOLS_PATH '$INSTDIR\tools'
-    StrCpy $NODE64_URL 'http://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x64.7z'
-    StrCpy $NODE86_URL 'http://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x86.7z'
+    StrCpy $NODE64_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x64.7z'
+    StrCpy $NODE86_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x86.7z'
     StrCpy $NODE64_ORG_DIR 'node-v10.19.0-win-x64'
     StrCpy $NODE86_ORG_DIR 'node-v10.19.0-win-x86'
   FunctionEnd
@@ -287,20 +287,20 @@
     SetOutPath $INSTDIR
     ${If} ${RunningX64}
       DetailPrint "Download nodejs 64-bits"
-      NSISdl::download "$NODE64_URL" "$INSTDIR\nodejs.7z"
+      inetc::get "$NODE64_URL" "$INSTDIR\nodejs.7z" /END
     ${Else}
       DetailPrint "Download nodejs 32-bits"
-      NSISdl::download "$NODE86_URL" "$INSTDIR\nodejs.7z"
+      inetc::get "$NODE86_URL" "$INSTDIR\nodejs.7z" /END
     ${EndIf}  
     Pop $R0 ;Get the return value
-      StrCmp $R0 "success" +3
+      StrCmp $R0 "OK" +3
       MessageBox MB_OK "Download nodejs failed: $R0"
       Quit
     SetDetailsView show
     DetailPrint "Extract nodejs"
     Nsis7z::ExtractWithDetails "$INSTDIR\nodejs.7z" "Extracting nodejs package %s..."
     Pop $R0
-      StrCmp $R0 "success" +3
+      StrCmp $R0 "OK" +3
       MessageBox MB_OK "Extract nodejs failed: $R0"
       Quit
     ${If} ${RunningX64}
