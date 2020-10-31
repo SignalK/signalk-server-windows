@@ -28,7 +28,7 @@
 </li>
 <li><p>Several windows will open successively during the installation.<br>The <code>Signal K as services</code> will popup 3 message box asking for permission to install the Windows service.<br>Answer with <code>OK</code>.<br><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK"><br><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows">  </p>
 </li>
-<li><p>At the end, check log if no errors and close the installer with <code>Close</code> button.<br><img src="screenshots/Install-Finished.png" alt="Install-Finished">..</p>
+<li><p>At the end, check log if no errors and close the installer with <code>Close</code> button.<br><img src="screenshots/Install-Finished.png" alt="Install-Finished"><br>Install log are saved to file <code>install.log</code> in the root of your install directory.  </p>
 </li>
 </ul>
 <p>Your Signal K server is now installed.<br>If you have select <code>Desktop shortcuts</code>, you will find at least 1 icons on your desktop:<br><img src="screenshots/Desktop-shortcuts.png" alt="Desktop-shortcuts">  </p>
@@ -73,14 +73,16 @@ After that, restart the server by click on desktop icon <code>Start Signal K Ser
 <li>You can then safely delete the root directory e.g. <code>c:\signalk</code>  </li>
 <li>And that&#39;s all !  </li>
 </ul>
-<p>**Rebuild install kit</p>
+<p><strong>Rebuild install kit:</strong>  </p>
 <ul>
 <li>Clone Github project: <code>git clone https://github.com/SignalK/signalk-server-windows.git</code>  </li>
-<li>Install <code>nsis-3.05-setup.exe</code> located in download folder.  </li>
+<li>Install <code>nsis-3.06.1-setup.exe</code> located in download folder.  </li>
 <li>Extract <code>Nsis7z_19.00.7z</code>  </li>
 <li>Copy <code>Plugins\x86-ansi</code> &amp; <code>Plugins\x86-unicode</code> content in the Plugins folder of NSIS install directory.  </li>
 <li>Extract <code>Inetc.zip</code>  </li>
 <li>Copy <code>Plugins\x86-ansi</code> &amp; <code>Plugins\x86-unicode</code> content in the Plugins folder of NSIS install directory.  </li>
+<li>Extract <code>nsis-3.06.1-log.zip</code>  </li>
+<li>Copy the content of extracted files in the folder of NSIS install directory.  </li>
 <li>Run NSIS.  </li>
 <li>Open <code>NSIS\signalk-server.nsi</code> file in NSIS.  </li>
 <li>Select <code>Script</code> <code>Recompile</code></li>

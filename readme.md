@@ -41,7 +41,8 @@ Answer with `OK`.
 ![Install-Progress-NPM-node-windows](screenshots/Install-Progress-NPM-node-windows.png)  
   
 - At the end, check log if no errors and close the installer with `Close` button.  
-![Install-Finished](screenshots/Install-Finished.png)..
+![Install-Finished](screenshots/Install-Finished.png)  
+Install log are saved to file `install.log` in the root of your install directory.  
   
 Your Signal K server is now installed.  
 If you have select `Desktop shortcuts`, you will find at least 1 icons on your desktop:  
@@ -96,11 +97,13 @@ Or ask for support at http://slack-invite.signalk.org/ in channel #support-windo
   
 **Rebuild install kit:**  
 - Clone Github project: `git clone https://github.com/SignalK/signalk-server-windows.git`  
-- Install `nsis-3.05-setup.exe` located in download folder.  
+- Install `nsis-3.06.1-setup.exe` located in download folder.  
 - Extract `Nsis7z_19.00.7z`  
 - Copy `Plugins\x86-ansi` & `Plugins\x86-unicode` content in the Plugins folder of NSIS install directory.  
 - Extract `Inetc.zip`  
 - Copy `Plugins\x86-ansi` & `Plugins\x86-unicode` content in the Plugins folder of NSIS install directory.  
+- Extract `nsis-3.06.1-log.zip`  
+- Copy the content of extracted files in the folder of NSIS install directory.  
 - Run NSIS.  
 - Open `NSIS\signalk-server.nsi` file in NSIS.  
 - Select `Script` `Recompile`

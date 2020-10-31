@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.3.3"
+  !define INST_VERSION "0.3.4"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -71,13 +71,9 @@
 ;======================================================
   Function .onInit
     SetDetailsView show
-;    Call SetGlobalVars
-;    System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("USERPROFILE", "$USERPROFILE").r2'
-;    DetailPrint "Set USERPROFILE=$USERPROFILE"
-
-;    System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("NODE_PATH", "$NODE_PATH").r0'
-;    DetailPrint "Set NODE_PATH=$NODE_PATH"
-
+    LogSet on
+    LogText "Signal K installer version: ${INST_VERSION}"
+    LogSet off
   FunctionEnd
 ;======================================================
   Function GenToolsFiles
@@ -282,6 +278,7 @@
   FunctionEnd
 ;======================================================
   Section "Extract nodejs" SecExtractJS
+    LogSet on
 ;    SectionIn RO
     Call SetGlobalVars
     SetOutPath $INSTDIR
@@ -325,6 +322,7 @@
   SectionEnd
 
   Section "Generate tools" SecTools
+    LogSet on
 ;    SectionIn RO
     Call SetGlobalVars
     DetailPrint "Install tools files"
@@ -342,12 +340,14 @@
   SectionEnd
 
   Section "install signalk-server" SecSkInstall
+    LogSet on
     Call SetGlobalVars
     ExecWait '"$TOOLS_PATH\npm-install-signalk-server.cmd"' $0
     DetailPrint "npm install -g --unsafe-perm  signalk-server returned $0"
   SectionEnd
 
   Section "Signal K as services" SecSkService
+    LogSet on
     Call SetGlobalVars
     ExecWait '"$TOOLS_PATH\create-signalk-server-services.cmd"' $0
     DetailPrint "Install Signal K as windows services returned $0"
@@ -355,6 +355,7 @@
 
   SectionGroup /e "Desktop shortcut" SecShortcuts
     Section "Start service" SecStartService
+      LogSet on
       Call SetGlobalVars
       DetailPrint "Create desktop shortcut 'Start Signal K Service'"
       CreateShortCut "$DESKTOP\Start Signal K Service.lnk" "$TOOLS_PATH\start-signalk-server-services.cmd" \
@@ -362,12 +363,14 @@
         "" "Start Signal K Service"
     SectionEnd
     Section "Signal Web GUI" SecSignalkWebGUI
+      LogSet on
       Call SetGlobalVars
       DetailPrint "Create desktop shortcut 'SignalK-GUI'"
       !insertmacro CreateInternetShortcutWithIcon "$DESKTOP\SignalK-GUI.URL" "http://localhost:3000" "$TOOLS_PATH\signalk.ico" 0
     SectionEnd
 
     Section /o "Signal K CLI" SecSignalkCli
+      LogSet on
       Call SetGlobalVars
       DetailPrint "Create desktop shortcut 'Signal K CLI'"
       CreateShortCut "$DESKTOP\Signal K CLI.lnk" "cmd" \
