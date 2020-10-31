@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.3.6"
+  !define INST_VERSION "0.3.7"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -39,6 +39,7 @@
   Var /GLOBAL NODE_MODULES_PATH
   Var /GLOBAL OPENSSL_PATH
   Var /GLOBAL OPENSSL_BIN_PATH
+  Var /GLOBAL OPENSSL_CONF
   Var /GLOBAL TOOLS_PATH
   Var /GLOBAL INSTALL_DRIVE
   Var /GLOBAL NODE64_URL
@@ -52,6 +53,7 @@
     StrCpy $NODE_MODULES_PATH '$INSTDIR\nodejs\node_modules'
     StrCpy $OPENSSL_PATH '$INSTDIR\openssl'
     StrCpy $OPENSSL_BIN_PATH '$INSTDIR\openssl\bin'
+    StrCpy $OPENSSL_CONF '$INSTDIR\openssl\openssl.cnf'
     StrCpy $TOOLS_PATH '$INSTDIR\tools'
     StrCpy $NODE64_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x64.zip'
     StrCpy $NODE86_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x86.zip'
@@ -90,6 +92,7 @@
     FileWrite $9 'set PATH=%NODE_PATH%;$OPENSSL_BIN_PATH;%PATH%$\r$\n'
     FileWrite $9 'set SIGNALK_NODE_CONFIG_DIR=%USERPROFILE%\.signalk$\r$\n'
     FileWrite $9 'set SIGNALK_SERVER_IS_UPDATABLE=1$\r$\n'
+    FileWrite $9 'set OPENSSL_CONF=$OPENSSL_CONF$\r$\n'
     FileWrite $9 'cd %USERPROFILE%$\r$\n'
     FileWrite $9 'node.exe -p -e "$\'Your environment has been set up for using Node.js $\' + process.versions.node + $\' ($\' + process.arch + $\')$\'"%$\r$\n'
     FileWrite $9 'echo Welcome in signal K$\r$\n'
@@ -133,6 +136,10 @@
       Call ConvertBStoDBS 
       Pop $R0
     FileWrite $9 'process.env.Path = process.env.NODE_PATH + ";$R0;" + process.env.Path$\r$\n'
+      Push $OPENSSL_CONF
+      Call ConvertBStoDBS 
+      Pop $R0
+    FileWrite $9 'process.env.OPENSSL_CONF = "$R0"$\r$\n'
       Push $NODE_MODULES_PATH
       Call ConvertBStoDBS 
       Pop $R0
@@ -149,7 +156,8 @@
     FileWrite $9 '{name: "HOME",value: process.env["USERPROFILE"]},'
     FileWrite $9 '{name: "NODE_PATH",value: process.env.NODE_PATH},'
     FileWrite $9 '{name: "Path",value: process.env.Path},'
-    FileWrite $9 '{name: "USERPROFILE",value: process.env.USERPROFILE}'
+    FileWrite $9 '{name: "USERPROFILE",value: process.env.USERPROFILE},'
+    FileWrite $9 '{name: "OPENSSL_CONF",value: process.env.OPENSSL_CONF}'
     FileWrite $9 ']'
     FileWrite $9 '});$\r$\n'
     FileWrite $9 'svc.on("install",function(){$\r$\n'
@@ -238,6 +246,7 @@
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
     FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
     FileWrite $9 'set "Path=%NODE_PATH%;%Path%"$\r$\n'
+    FileWrite $9 'set OPENSSL_CONF=$OPENSSL_CONF$\r$\n'
     FileWrite $9 'cd $NODE_PATH$\r$\n'
     FileWrite $9 'npm install -g --unsafe-perm  node-windows$\r$\n'
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
@@ -257,6 +266,7 @@
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
     FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
     FileWrite $9 'set "Path=%NODE_PATH%;%Path%"$\r$\n'
+    FileWrite $9 'set OPENSSL_CONF=$OPENSSL_CONF$\r$\n'
     FileWrite $9 'cd $NODE_PATH$\r$\n'
     FileWrite $9 'npm install -g --unsafe-perm  signalk-server$\r$\n'
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
