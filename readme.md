@@ -16,6 +16,8 @@ ___
   
 **How to install Signal K server node:**  
 - Download installer at https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe  
+- You can verify the checksum of the exec file at https://github.com/SignalK/signalk-server-windows/releases/latest/download/SHA256SUMS.txt  
+`Get-FileHash .\signalk-server-setup.exe -Algorithm SHA256 | Format-List`  
 - Execute `signalk-server-setup.exe`.  
 Some anti-virus software considers that there are viruses in the installer. These are false positives.  
 You may need to add the installer in your exceptions, it is sometimes quarantined.  
@@ -32,17 +34,19 @@ The `Signal K as services` option is selected by default, this is the most inter
 ![Install-SelectComponents](screenshots/Install-SelectComponents.png)  
   
 - Then click `Install` button  
-![Install-Progress](screenshots/Install-Progress-Download-nodejs.png)  
+![Install-Progress](screenshots/Install-Progress.png)  
+  
+- Several windows will open successively during the installation.  
+![Install-Progress-Download-nodejs](screenshots/Install-Progress-Download-nodejs.png)  
 ![Install-Progress-NPM-SignalK](screenshots/Install-Progress-NPM-SignalK.png)  
 ![Install-Progress-NPM-node-windows](screenshots/Install-Progress-NPM-node-windows.png)  
   
-- Several windows will open successively during the installation.  
-The `Signal K as services` will popup 3 message box asking for permission to install the Windows service.  
+- The `Signal K as services` will bring up 3 message boxes asking permission to install the Windows service.  
 Answer with `OK`.  
   
 - At the end, check log if no errors and close the installer with `Close` button.  
 ![Install-Finished](screenshots/Install-Finished.png)  
-Install log are saved to file `install.log` in the root of your install directory.  
+The install log are saved to file `install.log` in the root of your install directory.  
   
 Your Signal K server is now installed.  
 If you have select `Desktop shortcuts`, you will find at least 1 icons on your desktop:  

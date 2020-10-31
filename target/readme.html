@@ -18,17 +18,20 @@
 <p><strong>How to install Signal K server node:</strong>  </p>
 <ul>
 <li>Download installer at <a href="https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe">https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe</a>  </li>
+<li>You can verify the checksum of the exec file at <a href="https://github.com/SignalK/signalk-server-windows/releases/latest/download/SHA256SUMS.txt">https://github.com/SignalK/signalk-server-windows/releases/latest/download/SHA256SUMS.txt</a><br><code>Get-FileHash .\signalk-server-setup.exe -Algorithm SHA256 | Format-List</code>  </li>
 <li><p>Execute <code>signalk-server-setup.exe</code>.<br>Some anti-virus software considers that there are viruses in the installer. These are false positives.<br>You may need to add the installer in your exceptions, it is sometimes quarantined.<br>Please submit this file to your anti-virus support for scanning and whitelisting.<br><img src="screenshots/Install-Welcome.png" alt="Install-Welcome">  </p>
 </li>
 <li><p>Select your root directory.<br>Even if this is not the Windows specification, it is better not to choose <code>c:\program files</code> to avoid limited permissions in this folder.<br>Instead, choose <code>c:\signalk</code> or <code>d:\signalk</code>.<br><img src="screenshots/Install-SelectDir.png" alt="Install-SelectDir">  </p>
 </li>
 <li><p>Select the components to be installed.<br>The <code>Signal K as services</code> option is selected by default, this is the most interesting option for all users. If you deselect this option, you will have to keep a Windows command line open to run the server.<br><img src="screenshots/Install-SelectComponents.png" alt="Install-SelectComponents">  </p>
 </li>
-<li><p>Then click <code>Install</code> button<br><img src="screenshots/Install-Progress-Download-nodejs.png" alt="Install-Progress"><br><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK"><br><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows">  </p>
+<li><p>Then click <code>Install</code> button<br><img src="screenshots/Install-Progress.png" alt="Install-Progress">  </p>
 </li>
-<li><p>Several windows will open successively during the installation.<br>The <code>Signal K as services</code> will popup 3 message box asking for permission to install the Windows service.<br>Answer with <code>OK</code>.  </p>
+<li><p>Several windows will open successively during the installation.<br><img src="screenshots/Install-Progress-Download-nodejs.png" alt="Install-Progress-Download-nodejs"><br><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK"><br><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows">  </p>
 </li>
-<li><p>At the end, check log if no errors and close the installer with <code>Close</code> button.<br><img src="screenshots/Install-Finished.png" alt="Install-Finished"><br>Install log are saved to file <code>install.log</code> in the root of your install directory.  </p>
+<li><p>The <code>Signal K as services</code> will bring up 3 message boxes asking permission to install the Windows service.<br>Answer with <code>OK</code>.  </p>
+</li>
+<li><p>At the end, check log if no errors and close the installer with <code>Close</code> button.<br><img src="screenshots/Install-Finished.png" alt="Install-Finished"><br>The install log are saved to file <code>install.log</code> in the root of your install directory.  </p>
 </li>
 </ul>
 <p>Your Signal K server is now installed.<br>If you have select <code>Desktop shortcuts</code>, you will find at least 1 icons on your desktop:<br><img src="screenshots/Desktop-shortcuts.png" alt="Desktop-shortcuts">  </p>
