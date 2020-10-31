@@ -6,7 +6,7 @@ ___
   
 **What's provide with this installer:**  
 - The latest version of the Signal K server downloaded during installation.  
-- node js 10.19.0 ( downloaded from https://nodejs.org/dist/v10.19.0/ during installation).  
+- node js 10.23.0 ( downloaded from https://nodejs.org/dist/v10.23.0/ during installation).  
 - openssl 1.1.1h ( from https://slproweb.com/products/Win32OpenSSL.html ).  
 - support of X64 and X86 Windows version (Windows 10 X64 and Windows 7 X86 tested).  
 - All packages are installed under a root directory. You choose your root directory at the time of installation.  

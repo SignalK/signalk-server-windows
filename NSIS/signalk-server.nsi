@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.3.8"
+  !define INST_VERSION "0.3.9"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -55,10 +55,10 @@
     StrCpy $OPENSSL_BIN_PATH '$INSTDIR\openssl\bin'
     StrCpy $OPENSSL_CONF '$INSTDIR\openssl\openssl.cnf'
     StrCpy $TOOLS_PATH '$INSTDIR\tools'
-    StrCpy $NODE64_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x64.zip'
-    StrCpy $NODE86_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x86.zip'
-    StrCpy $NODE64_ORG_DIR 'node-v10.19.0-win-x64'
-    StrCpy $NODE86_ORG_DIR 'node-v10.19.0-win-x86'
+    StrCpy $NODE64_URL 'https://nodejs.org/dist/v10.23.0/node-v10.23.0-win-x64.zip'
+    StrCpy $NODE86_URL 'https://nodejs.org/dist/v10.23.0/node-v10.23.0-win-x86.zip'
+    StrCpy $NODE64_ORG_DIR 'node-v10.23.0-win-x64'
+    StrCpy $NODE86_ORG_DIR 'node-v10.23.0-win-x86'
   FunctionEnd
 
   !macro CreateInternetShortcutWithIcon FILEPATH URL ICONPATH ICONINDEX
