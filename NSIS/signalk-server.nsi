@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.3.4"
+  !define INST_VERSION "0.3.5"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -53,8 +53,8 @@
     StrCpy $OPENSSL_PATH '$INSTDIR\openssl'
     StrCpy $OPENSSL_BIN_PATH '$INSTDIR\openssl\bin'
     StrCpy $TOOLS_PATH '$INSTDIR\tools'
-    StrCpy $NODE64_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x64.7z'
-    StrCpy $NODE86_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x86.7z'
+    StrCpy $NODE64_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x64.zip'
+    StrCpy $NODE86_URL 'https://nodejs.org/dist/v10.19.0/node-v10.19.0-win-x86.zip'
     StrCpy $NODE64_ORG_DIR 'node-v10.19.0-win-x64'
     StrCpy $NODE86_ORG_DIR 'node-v10.19.0-win-x86'
   FunctionEnd
@@ -280,32 +280,42 @@
   Section "Extract nodejs" SecExtractJS
     LogSet on
 ;    SectionIn RO
+    SetDetailsView show
     Call SetGlobalVars
     SetOutPath $INSTDIR
+    File /r ..\target\wget.exe
+    LogText "Extract wget.exe to $INSTDIR"
+    ClearErrors
     ${If} ${RunningX64}
       DetailPrint "Download nodejs 64-bits"
-      inetc::get "$NODE64_URL" "$INSTDIR\nodejs.7z" /END
+      LogText "Download nodejs 64-bits from $NODE64_URL"
+      ExecWait '"$INSTDIR\wget.exe" −O "$INSTDIR\nodejs.zip" "$NODE64_URL"' $0
     ${Else}
       DetailPrint "Download nodejs 32-bits"
-      inetc::get "$NODE86_URL" "$INSTDIR\nodejs.7z" /END
+      LogText "Download nodejs 32-bits from $NODE86_URL"
+      ExecWait '"$INSTDIR\wget.exe" −O "$INSTDIR\nodejs.zip" "$NODE86_URL"' $0
     ${EndIf}  
-    Pop $R0 ;Get the return value
-      StrCmp $R0 "OK" +3
-      MessageBox MB_OK "Download nodejs failed: $R0"
+    ${If} ${Errors}
+      MessageBox MB_OK "Download nodejs failed with code: $0"
+      LogText "Download nodejs failed whith code: $0"
       Quit
-    SetDetailsView show
+    ${EndIf}
     DetailPrint "Extract nodejs"
-    Nsis7z::ExtractWithDetails "$INSTDIR\nodejs.7z" "Extracting nodejs package %s..."
-    Pop $R0
-      StrCmp $R0 "OK" +3
-      MessageBox MB_OK "Extract nodejs failed: $R0"
+    LogText "Extract nodejs from $INSTDIR\nodejs.zip to $INSTDIR"
+    nsisunz::Unzip "$INSTDIR\nodejs.zip" "$INSTDIR"
+    Pop $0
+    DetailPrint "Extract nodejs: $0"
+    StrCmp $0 "success" unzipOk
+      MessageBox MB_OK "Extract nodejs failed"
       Quit
+    unzipOk:
     ${If} ${RunningX64}
       Rename $INSTDIR\$NODE64_ORG_DIR $INSTDIR\nodejs
     ${Else}
       Rename $INSTDIR\$NODE86_ORG_DIR $INSTDIR\nodejs
     ${EndIf}  
-    Delete "$INSTDIR\nodejs.7z"
+    Delete "$INSTDIR\nodejs.zip"
+    Delete "$INSTDIR\wget.exe"
   SectionEnd
 
   Section "Extract openssl" SecExtractSSL

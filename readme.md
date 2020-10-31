@@ -98,13 +98,9 @@ Or ask for support at http://slack-invite.signalk.org/ in channel #support-windo
 **Rebuild install kit:**  
 - Clone Github project: `git clone https://github.com/SignalK/signalk-server-windows.git`  
 - Install `nsis-3.06.1-setup.exe` located in download folder.  
-- Extract `Nsis7z_19.00.7z`  
-- Copy `Plugins\x86-ansi` & `Plugins\x86-unicode` content in the Plugins folder of NSIS install directory.  
-- Extract `Inetc.zip`  
-- Copy `Plugins\x86-ansi` & `Plugins\x86-unicode` content in the Plugins folder of NSIS install directory.  
-- Extract `nsis-3.06.1-log.zip`  
+- Extract `nsis-3.06.1-log.zip` located in download folder.  
 - Copy the content of extracted files in the folder of NSIS install directory.  
 - Run NSIS.  
 - Open `NSIS\signalk-server.nsi` file in NSIS.  
 - Select `Script` `Recompile`
-- The new compiled install kit is located in `output`directory.  
+- The new compiled install kit is located in `output` directory.  
