@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.3.5"
+  !define INST_VERSION "0.3.6"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -87,7 +87,7 @@
     FileWrite $9 '$INSTALL_DRIVE$\r$\n'
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
     FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
-    FileWrite $9 'set PATH=%NODE_PATH%;$OPENSSL_BIN_PATH;%~dp0;%PATH%$\r$\n'
+    FileWrite $9 'set PATH=%NODE_PATH%;$OPENSSL_BIN_PATH;%PATH%$\r$\n'
     FileWrite $9 'set SIGNALK_NODE_CONFIG_DIR=%USERPROFILE%\.signalk$\r$\n'
     FileWrite $9 'set SIGNALK_SERVER_IS_UPDATABLE=1$\r$\n'
     FileWrite $9 'cd %USERPROFILE%$\r$\n'
@@ -181,7 +181,7 @@
     FileWrite $9 '$INSTALL_DRIVE$\r$\n'
     FileWrite $9 'echo Install signalk as service in progress...$\r$\n'
     FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
-    FileWrite $9 'set "PATH=%NODE_PATH%;%~dp0;%PATH%"$\r$\n'
+    FileWrite $9 'set "PATH=%NODE_PATH%;%PATH%"$\r$\n'
     FileWrite $9 'cd $TOOLS_PATH$\r$\n'
     FileWrite $9 'node .\install-signalk-server-services.js$\r$\n'
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
@@ -237,7 +237,7 @@
     FileWrite $9 'echo Install node-windows package in progress...$\r$\n'
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
     FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
-    FileWrite $9 'set "Path=%NODE_PATH%;%~dp0;%Path%"$\r$\n'
+    FileWrite $9 'set "Path=%NODE_PATH%;%Path%"$\r$\n'
     FileWrite $9 'cd $NODE_PATH$\r$\n'
     FileWrite $9 'npm install -g --unsafe-perm  node-windows$\r$\n'
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
@@ -256,7 +256,7 @@
     FileWrite $9 'echo Install signalk-server package in progress...$\r$\n'
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
     FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
-    FileWrite $9 'set "Path=%NODE_PATH%;%~dp0;%Path%"$\r$\n'
+    FileWrite $9 'set "Path=%NODE_PATH%;%Path%"$\r$\n'
     FileWrite $9 'cd $NODE_PATH$\r$\n'
     FileWrite $9 'npm install -g --unsafe-perm  signalk-server$\r$\n'
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
