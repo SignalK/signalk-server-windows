@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.3.9"
+  !define INST_VERSION "0.4.0"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -248,7 +248,7 @@
     FileWrite $9 'set "Path=%NODE_PATH%;%Path%"$\r$\n'
     FileWrite $9 'set OPENSSL_CONF=$OPENSSL_CONF$\r$\n'
     FileWrite $9 'cd $NODE_PATH$\r$\n'
-    FileWrite $9 'npm install -g --unsafe-perm  node-windows$\r$\n'
+    FileWrite $9 'npm install -g --unsafe-perm  node-windows@1.0.0-beta.5$\r$\n'
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
     FileWrite $9 'exit 0$\r$\n'
     FileWrite $9 ':ERROR$\r$\n'

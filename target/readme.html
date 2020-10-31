@@ -24,9 +24,9 @@
 </li>
 <li><p>Select the components to be installed.<br>The <code>Signal K as services</code> option is selected by default, this is the most interesting option for all users. If you deselect this option, you will have to keep a Windows command line open to run the server.<br><img src="screenshots/Install-SelectComponents.png" alt="Install-SelectComponents">  </p>
 </li>
-<li><p>Then click <code>Install</code> button<br><img src="screenshots/Install-Progress-Download-nodejs.png" alt="Install-Progress">  </p>
+<li><p>Then click <code>Install</code> button<br><img src="screenshots/Install-Progress-Download-nodejs.png" alt="Install-Progress"><br><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK"><br><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows">  </p>
 </li>
-<li><p>Several windows will open successively during the installation.<br>The <code>Signal K as services</code> will popup 3 message box asking for permission to install the Windows service.<br>Answer with <code>OK</code>.<br><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK"><br><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows">  </p>
+<li><p>Several windows will open successively during the installation.<br>The <code>Signal K as services</code> will popup 3 message box asking for permission to install the Windows service.<br>Answer with <code>OK</code>.  </p>
 </li>
 <li><p>At the end, check log if no errors and close the installer with <code>Close</code> button.<br><img src="screenshots/Install-Finished.png" alt="Install-Finished"><br>Install log are saved to file <code>install.log</code> in the root of your install directory.  </p>
 </li>
@@ -76,11 +76,20 @@ After that, restart the server by click on desktop icon <code>Start Signal K Ser
 <p><strong>Rebuild install kit:</strong>  </p>
 <ul>
 <li>Clone Github project: <code>git clone https://github.com/SignalK/signalk-server-windows.git</code>  </li>
-<li>Install <code>nsis-3.06.1-setup.exe</code> located in download folder.  </li>
-<li>Extract <code>nsis-3.06.1-log.zip</code> located in download folder.  </li>
+<li>Install <code>nsis-3.06.1-setup.exe</code> located in src folder.  </li>
+<li>Extract <code>nsis-3.06.1-log.zip</code> located in src folder.  </li>
 <li>Copy the content of extracted files in the folder of NSIS install directory.  </li>
 <li>Run NSIS.  </li>
 <li>Open <code>NSIS\signalk-server.nsi</code> file in NSIS.  </li>
 <li>Select <code>Script</code> <code>Recompile</code></li>
 <li>The new compiled install kit is located in <code>output</code> directory.  </li>
+</ul>
+<p><strong>Credits:</strong></p>
+<ul>
+<li>Openssl for Windows <a href="https://slproweb.com/products/Win32OpenSSL.html">https://slproweb.com/products/Win32OpenSSL.html</a>  </li>
+<li>NodeJs <a href="https://nodejs.org/">https://nodejs.org/</a>  </li>
+<li>MarkDown to HTML <a href="https://markdowntohtml.com/">https://markdowntohtml.com/</a>  </li>
+<li>Signal K <a href="http://signalk.org/">http://signalk.org/</a></li>
+<li>Wget for Windows <a href="https://eternallybored.org/misc/wget/">https://eternallybored.org/misc/wget/</a></li>
+<li>NodeJs windows service <a href="https://www.npmjs.com/package/node-windows">https://www.npmjs.com/package/node-windows</a></li>
 </ul>

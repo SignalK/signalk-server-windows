@@ -33,12 +33,12 @@ The `Signal K as services` option is selected by default, this is the most inter
   
 - Then click `Install` button  
 ![Install-Progress](screenshots/Install-Progress-Download-nodejs.png)  
+![Install-Progress-NPM-SignalK](screenshots/Install-Progress-NPM-SignalK.png)  
+![Install-Progress-NPM-node-windows](screenshots/Install-Progress-NPM-node-windows.png)  
   
 - Several windows will open successively during the installation.  
 The `Signal K as services` will popup 3 message box asking for permission to install the Windows service.  
 Answer with `OK`.  
-![Install-Progress-NPM-SignalK](screenshots/Install-Progress-NPM-SignalK.png)  
-![Install-Progress-NPM-node-windows](screenshots/Install-Progress-NPM-node-windows.png)  
   
 - At the end, check log if no errors and close the installer with `Close` button.  
 ![Install-Finished](screenshots/Install-Finished.png)  
@@ -97,10 +97,19 @@ Or ask for support at http://slack-invite.signalk.org/ in channel #support-windo
   
 **Rebuild install kit:**  
 - Clone Github project: `git clone https://github.com/SignalK/signalk-server-windows.git`  
-- Install `nsis-3.06.1-setup.exe` located in download folder.  
-- Extract `nsis-3.06.1-log.zip` located in download folder.  
+- Install `nsis-3.06.1-setup.exe` located in src folder.  
+- Extract `nsis-3.06.1-log.zip` located in src folder.  
 - Copy the content of extracted files in the folder of NSIS install directory.  
 - Run NSIS.  
 - Open `NSIS\signalk-server.nsi` file in NSIS.  
 - Select `Script` `Recompile`
 - The new compiled install kit is located in `output` directory.  
+  
+**Credits:**
+- Openssl for Windows https://slproweb.com/products/Win32OpenSSL.html  
+- NodeJs https://nodejs.org/  
+- MarkDown to HTML https://markdowntohtml.com/  
+- Signal K http://signalk.org/
+- Wget for Windows https://eternallybored.org/misc/wget/
+- NodeJs windows service https://www.npmjs.com/package/node-windows
+  
