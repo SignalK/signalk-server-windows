@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.4.0"
+  !define INST_VERSION "0.4.1"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -299,11 +299,11 @@
     ${If} ${RunningX64}
       DetailPrint "Download nodejs 64-bits"
       LogText "Download nodejs 64-bits from $NODE64_URL"
-      ExecWait '"$INSTDIR\wget.exe" −O "$INSTDIR\nodejs.zip" "$NODE64_URL"' $0
+      ExecWait '"$INSTDIR\wget.exe" "--output-document=$INSTDIR\nodejs.zip" "$NODE64_URL"' $0
     ${Else}
       DetailPrint "Download nodejs 32-bits"
       LogText "Download nodejs 32-bits from $NODE86_URL"
-      ExecWait '"$INSTDIR\wget.exe" −O "$INSTDIR\nodejs.zip" "$NODE86_URL"' $0
+      ExecWait '"$INSTDIR\wget.exe" "--output-document=$INSTDIR\nodejs.zip" "$NODE86_URL"' $0
     ${EndIf}  
     ${If} ${Errors}
       MessageBox MB_OK "Download nodejs failed with code: $0"
