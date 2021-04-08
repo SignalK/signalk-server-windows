@@ -11,7 +11,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.4.1"
+  !define INST_VERSION "0.4.2"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -219,7 +219,7 @@
     FileOpen  $9  $TOOLS_PATH\start-signalk-server-services.cmd w
     FileWrite $9 '@ECHO OFF$\r$\n'
     FileWrite $9 'echo Start Signal K service...$\r$\n'
-    FileWrite $9 'net user %USERNAME% /active:yes  >nul 2>&1$\r$\n'
+    FileWrite $9 'openfiles >NUL 2>&1$\r$\n'
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR_ADMIN$\r$\n'
     FileWrite $9 'goto :STOP_SERVICE$\r$\n'
     FileWrite $9 ':ERROR_ADMIN$\r$\n'
