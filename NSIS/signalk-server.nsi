@@ -11,12 +11,12 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "0.4.2"
+  !define INST_VERSION "0.4.3"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
   InstallDir "c:\signalk"
-  RequestExecutionLevel user ; user | admin 
+  RequestExecutionLevel admin ; user | admin 
   !define MUI_ICON "..\target\tools\signalk.ico"
 ;======================================================
 ;Pages
@@ -72,8 +72,9 @@
 
 ;======================================================
   Function .onInit
-    SetDetailsView show
+    SetOutPath $INSTDIR
     LogSet on
+    SetDetailsView show
     LogText "Signal K installer version: ${INST_VERSION}"
     LogSet off
   FunctionEnd
@@ -329,6 +330,7 @@
   SectionEnd
 
   Section "Extract openssl" SecExtractSSL
+    LogSet on
 ;    SectionIn RO
     Call SetGlobalVars
     SetOutPath $OPENSSL_PATH
