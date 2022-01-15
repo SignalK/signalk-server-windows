@@ -114,6 +114,13 @@
     FileWrite $9 'process.env.SIGNALK_NODE_CONFIG_DIR = process.env.USERPROFILE + "\\.signalk"$\r$\n'
     FileWrite $9 'process.env.SIGNALK_SERVER_IS_UPDATABLE = "1"$\r$\n'
     FileWrite $9 '//process.env.DEBUG = ""$\r$\n'
+      Push $OPENSSL_BIN_PATH
+      Call ConvertBStoDBS 
+      Pop $R0
+      Push $NODE_PATH
+      Call ConvertBStoDBS 
+      Pop $R1
+	FileWrite $9 'process.env.Path = "$R1;$R0;" + process.env.Path$\r$\n'  
       Push $NODE_MODULES_PATH
       Call ConvertBStoDBS 
       Pop $R0
@@ -156,7 +163,6 @@
     FileWrite $9 '  env: ['
     FileWrite $9 '{name: "HOME",value: process.env["USERPROFILE"]},'
     FileWrite $9 '{name: "NODE_PATH",value: process.env.NODE_PATH},'
-    FileWrite $9 '{name: "Path",value: process.env.Path},'
     FileWrite $9 '{name: "USERPROFILE",value: process.env.USERPROFILE},'
     FileWrite $9 '{name: "OPENSSL_CONF",value: process.env.OPENSSL_CONF}'
     FileWrite $9 ']'
