@@ -49,6 +49,11 @@
   Var /GLOBAL NODE86_ORG_DIR
   Var /GLOBAL W7_DETECTED
   Var /GLOBAL LOG_FILE
+  Var /GLOBAL NODE_INSTALLED
+  Var /GLOBAL NODE_INSTALL
+  Var /GLOBAL NODE_UPGRADE
+  Var /GLOBAL NODE_SHORT_VERSION
+  Var /GLOBAL NODE_VERSION
 
   Function SetGlobalVars
     LogSet on
@@ -64,12 +69,16 @@
       StrCpy $NODE86_URL 'https://nodejs.org/dist/v16.13.2/node-v16.13.2-win-x86.zip'
       StrCpy $NODE64_ORG_DIR 'node-v16.13.2-win-x64'
       StrCpy $NODE86_ORG_DIR 'node-v16.13.2-win-x86'
+      StrCpy $NODE_VERSION 'v16.13.2'
+      StrCpy $NODE_SHORT_VERSION 'v16'
     ${Else}
       StrCpy $NODE64_URL 'https://nodejs.org/download/release/v12.22.9/node-v12.22.9-win-x64.zip'
       StrCpy $NODE86_URL 'https://nodejs.org/download/release/v12.22.9/node-v12.22.9-win-x86.zip'
       StrCpy $NODE64_ORG_DIR 'node-v12.22.9-win-x64'
       StrCpy $NODE86_ORG_DIR 'node-v12.22.9-win-x86'
       StrCpy $W7_DETECTED '1'
+      StrCpy $NODE_VERSION 'v12.22.9'
+      StrCpy $NODE_SHORT_VERSION 'v12'
     ${EndIf}
   FunctionEnd
 
@@ -83,10 +92,38 @@
   !macroend
 
 ;======================================================
+  Function .onVerifyInstDir
+    Call SetGlobalVars
+    ${If} ${FileExists} "$NODE_PATH\node.exe"
+      StrCpy $NODE_INSTALL '1'
+      StrCpy $NODE_UPGRADE '1'
+      nsExec::ExecToStack '"$NODE_PATH\node.exe" -v'
+      Pop $0 # return value/error/timeout
+      Pop $1 # printed text, up to ${NSIS_MAX_STRLEN}
+      StrCpy $NODE_INSTALLED $1
+      DetailPrint 'nodejs detected: "$NODE_PATH\node.exe" in version: $NODE_INSTALLED'
+      LogText "Return code: $0"
+      ${StrContains} $0 "$NODE_SHORT_VERSION" $NODE_INSTALLED
+      StrCmp $0 "" noinstall
+      StrCpy $NODE_INSTALL '1'
+      StrCpy $NODE_UPGRADE '1'
+      Goto done
+      noinstall:
+      StrCpy $NODE_INSTALL '0'
+      StrCpy $NODE_UPGRADE '0'
+      done:
+    ${Else}
+      StrCpy $NODE_INSTALL '1'
+      StrCpy $NODE_UPGRADE '0'
+    ${EndIf}
+    LogText "NODE_INSTALL: '$NODE_INSTALL' NODE_UPGRADE: '$NODE_UPGRADE'"
+  FunctionEnd
+;======================================================
   Function .onInit
     SetOutPath $INSTDIR
     LogSet on
     SetDetailsView show
+    ;Call SetGlobalVars
     LogText "Signal K installer version: ${INST_VERSION}"
     ${IfNot} ${AtLeastWin10}
       MessageBox MB_ICONEXCLAMATION|MB_OK "Your current version of Windows is lower than Windows 10,$\nNodeJS 12 will be installed instead of NodeJS 16 with limited Signal K server support (> 1.40.0)."
@@ -136,7 +173,7 @@
       Push $NODE_PATH
       Call ConvertBStoDBS 
       Pop $R1
-	FileWrite $9 'process.env.Path = "$R1;$R0;" + process.env.Path$\r$\n'  
+    FileWrite $9 'process.env.Path = "$R1;$R0;" + process.env.Path$\r$\n'  
       Push $NODE_MODULES_PATH
       Call ConvertBStoDBS 
       Pop $R0
@@ -350,43 +387,83 @@
 ;======================================================
   Section "Extract nodejs" SecExtractJS
     LogSet on
-;    SectionIn RO
     SetDetailsView show
-    Call SetGlobalVars
+    StrCmp $NODE_INSTALL '1' installnode
+    SetOutPath $INSTDIR
+    File "/oname=readme-${INST_VERSION}.html" "..\target\readme.html"
+    ExecShell "open" "$INSTDIR\readme-${INST_VERSION}.html"
+    System::Call "User32::SetWindowPos(i $HWNDPARENT, i -1, i 0, i 0, i 0, i 0, i 3) i." ; Keep focus
+    DetailPrint ""
+    DetailPrint "A different major version of NodeJs is detected: $NODE_INSTALLED"
+    DetailPrint "in $INSTDIR"
+    DetailPrint "and cannot be updated to $NODE_VERSION"
+    DetailPrint "Please see upgrade section in"
+    DetailPrint "readme-${INST_VERSION}.html page that has just opened"
+    DetailPrint "Or close and restart the installer"
+    DetailPrint "without checking the 'Extract nodejs' box"
+    DetailPrint "to upgrade only Signal K (not recommended)"
+    MessageBox MB_ICONSTOP|MB_OK "A different major version of NodeJs is detected in the installation path and cannot be updated"
+    Abort
+    installnode:
     SetOutPath $INSTDIR
     File /r ..\target\wget.exe
-    LogText "Extract wget.exe to $INSTDIR"
+    DetailPrint "Extract wget.exe to $INSTDIR"
     ClearErrors
     ${If} ${RunningX64}
-      DetailPrint "Download nodejs 64-bits"
-      LogText "Download nodejs 64-bits from $NODE64_URL"
+      DetailPrint "Download nodejs 64-bits from $NODE64_URL"
       ExecWait '"$INSTDIR\wget.exe" "--output-document=$INSTDIR\nodejs.zip" "$NODE64_URL"' $0
     ${Else}
-      DetailPrint "Download nodejs 32-bits"
-      LogText "Download nodejs 32-bits from $NODE86_URL"
+      DetailPrint "Download nodejs 32-bits from $NODE86_URL"
       ExecWait '"$INSTDIR\wget.exe" "--output-document=$INSTDIR\nodejs.zip" "$NODE86_URL"' $0
     ${EndIf}
     ${If} ${Errors}
-      MessageBox MB_OK "Download nodejs failed with code: $0"
-      LogText "Download nodejs failed whith code: $0"
+      MessageBox MB_ICONSTOP|MB_OK "Download nodejs failed with code: $0"
+      DetailPrint "Download nodejs failed whith code: $0"
       Quit
     ${EndIf}
-    DetailPrint "Extract nodejs"
-    LogText "Extract nodejs from $INSTDIR\nodejs.zip to $INSTDIR"
+    DetailPrint "Extract nodejs from $INSTDIR\nodejs.zip to $INSTDIR"
     nsisunz::Unzip "$INSTDIR\nodejs.zip" "$INSTDIR"
     Pop $0
     DetailPrint "Extract nodejs: $0"
     StrCmp $0 "success" unzipOk
-      MessageBox MB_OK "Extract nodejs failed"
-      Quit
+    MessageBox MB_ICONSTOP|MB_OK "Extract nodejs failed"
+    DetailPrint "Extract nodejs failed: $0"
+    SetAutoClose false
+    Quit
     unzipOk:
+    StrCmp $NODE_UPGRADE '0' renamenode
+    DetailPrint "Upgrade NodeJS to $NODE_VERSION in progress..."
+    ${If} ${RunningX64}
+      CopyFiles /SILENT $INSTDIR\$NODE64_ORG_DIR\* $INSTDIR\nodejs
+    ${Else}
+      CopyFiles /SILENT $INSTDIR\$NODE86_ORG_DIR\* $INSTDIR\nodejs
+    ${EndIf}
+    DetailPrint "Upgrade NodeJS to $NODE_VERSION completed"
+    Goto endcopynode
+    renamenode:
+    DetailPrint "Install NodeJS $NODE_VERSION in progress..."
     ${If} ${RunningX64}
       Rename $INSTDIR\$NODE64_ORG_DIR $INSTDIR\nodejs
     ${Else}
       Rename $INSTDIR\$NODE86_ORG_DIR $INSTDIR\nodejs
     ${EndIf}
+    DetailPrint "Install NodeJS $NODE_VERSION completed"
+    endcopynode:
+    DetailPrint "Cleaning up temporary files..."
     Delete "$INSTDIR\nodejs.zip"
     Delete "$INSTDIR\wget.exe"
+    ${If} ${RunningX64}
+      DetailPrint 'RMDir /r "$INSTDIR\$NODE64_ORG_DIR"'
+      SetDetailsView hide
+      RMDir /r "$INSTDIR\$NODE64_ORG_DIR"
+    ${Else}
+      DetailPrint 'RMDir /r "$INSTDIR\$NODE86_ORG_DIR"'
+      SetDetailsView hide
+      RMDir /r "$INSTDIR\$NODE86_ORG_DIR"
+    ${EndIf}
+    SetDetailsView show
+    DetailPrint "Cleaning up temporary files completed"
+;    done:
   SectionEnd
 
   Section "Extract openssl" SecExtractSSL
@@ -423,7 +500,7 @@
 
   Section "install signalk-server" SecSkInstall
     LogSet on
-    Call SetGlobalVars
+;    Call SetGlobalVars
     ${If} $W7_DETECTED == "1"
       ExecWait '"$TOOLS_PATH\npm-install-serial.cmd"' $0
       DetailPrint "npm install -g --unsafe-perm serialport@10.1.0 returned $0"
@@ -434,7 +511,7 @@
 
   Section "Signal K as services" SecSkService
     LogSet on
-    Call SetGlobalVars
+;    Call SetGlobalVars
     ExecWait '"$TOOLS_PATH\create-signalk-server-services.cmd"' $0
     DetailPrint "Install Signal K as windows services returned $0"
   SectionEnd
@@ -442,7 +519,7 @@
   SectionGroup /e "Desktop shortcut" SecShortcuts
     Section "Start service" SecStartService
       LogSet on
-      Call SetGlobalVars
+;      Call SetGlobalVars
       DetailPrint "Create desktop shortcut 'Start Signal K Service'"
       CreateShortCut "$DESKTOP\Start Signal K Service.lnk" "$TOOLS_PATH\start-signalk-server-services.cmd" \
         "" "$TOOLS_PATH\signalk.ico" 0 SW_SHOWNORMAL \
@@ -450,14 +527,14 @@
     SectionEnd
     Section "Signal Web GUI" SecSignalkWebGUI
       LogSet on
-      Call SetGlobalVars
+;      Call SetGlobalVars
       DetailPrint "Create desktop shortcut 'SignalK-GUI'"
       !insertmacro CreateInternetShortcutWithIcon "$DESKTOP\SignalK-GUI.URL" "http://localhost:3000" "$TOOLS_PATH\signalk.ico" 0
     SectionEnd
 
     Section /o "Signal K CLI" SecSignalkCli
       LogSet on
-      Call SetGlobalVars
+;      Call SetGlobalVars
       DetailPrint "Create desktop shortcut 'Signal K CLI'"
       CreateShortCut "$DESKTOP\Signal K CLI.lnk" "cmd" \
         "/k $TOOLS_PATH\signalk-server-cli.cmd" "$TOOLS_PATH\signalk.ico" 0 SW_SHOWNORMAL \
@@ -466,30 +543,36 @@
 SectionGroupEnd
 
 ;======================================================
-!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecExtractJS}    "Download and extract node js binary and library, mandatory for running Signal K (Internet access required)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecExtractSSL}   "Extract OpenSSL binary and library (mandatory for running Signal K with https)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecTools}        "Generate startup scripts, home dir and tools for running Signal K on Windows OS (mandatory for running Signal K)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSkInstall}    "Install the lastest version of Signal K server node from npm repository (Internet access required)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSkService}    "Install Signal as Windows service (Internet access required)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts}    "Create desktop shortcut"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecStartService} "Desktop shortcut to start Signal K service.$\n'Signal K as services' must be selected"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSignalkCli}   "Desktop shortcut to open nodejs console for run Signal K as standalone server.$\nOnly for advanced users"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSignalkWebGUI}   "Desktop shortcut to open the web GUI of Signal K server"
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecExtractJS}    "Download and extract node js binary and library, mandatory for running Signal K (Internet access required)"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecExtractSSL}   "Extract OpenSSL binary and library (mandatory for running Signal K with https)"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecTools}        "Generate startup scripts, home dir and tools for running Signal K on Windows OS (mandatory for running Signal K)"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSkInstall}    "Install the lastest version of Signal K server node from npm repository (Internet access required)"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSkService}    "Install Signal as Windows service (Internet access required)"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts}    "Create desktop shortcut"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecStartService} "Desktop shortcut to start Signal K service.$\n'Signal K as services' must be selected"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSignalkCli}   "Desktop shortcut to open nodejs console for run Signal K as standalone server.$\nOnly for advanced users"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSignalkWebGUI}   "Desktop shortcut to open the web GUI of Signal K server"
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
 ;======================================================
+  Function .onSelChange
+    ${If} $0 != ${SecSkService}
+      Return
+    ${EndIf}
+    SectionGetFlags ${SecSkService} $0
+    IntOp $0 $0 & ${SF_SELECTED}
+    IntCmp $0 ${SF_SELECTED} enableShortCut disableShortCut
+    enableShortCut:
+    SectionSetFlags ${SecStartService} ${SF_SELECTED}
+    goto end
+    disableShortCut:
+    SectionSetFlags ${SecStartService} ${SF_RO}
+    end:
+  FunctionEnd
 
-Function .onSelChange
-  ${If} $0 != ${SecSkService}
-    Return
-  ${EndIf}
-  SectionGetFlags ${SecSkService} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  IntCmp $0 ${SF_SELECTED} enableShortCut disableShortCut
-  enableShortCut:
-  SectionSetFlags ${SecStartService} ${SF_SELECTED}
-  goto end
-  disableShortCut:
-  SectionSetFlags ${SecStartService} ${SF_RO}
-  end:
-FunctionEnd
+;Page instfiles "" "" instfilesLeave
+
+;Function instfilesLeave
+;  IfAbort 0 +2
+;    MessageBox MB_OK "user aborted"
+;FunctionEnd
