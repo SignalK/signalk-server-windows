@@ -1,20 +1,27 @@
-**All in one Windows installer  for Signal K server node http://signalk.org/**  
+**All in one Windows installer v1.0.0 for Signal K server node http://signalk.org/**  
   
 ___  
-**Prerequisite:**  
+# Prerequisite  
 - Internet connection during setup process  
+- **If you have already installed Signal K** with a previous version of the installer with a version of NodeJS lower than 16,  
+you will see a windows like this:  
+![Install-SelectDir](screenshots/Install-CheckNode.png)  
+Please see [Upgrade NodeJS](#upgrade-nodejs) before !  
+- **If your current OS version is lower than Windows 10**,  
+NodeJS 12 will be installed instead of NodeJS 16 with limited Signal K server support ( Windows 7 is end of life ).
   
-**What's provide with this installer:**  
+# What's provide with this installer  
 - The latest version of the Signal K server downloaded during installation.  
-- node js 10.23.0 ( downloaded from https://nodejs.org/dist/v10.23.0/ during installation).  
+- NodeJS 16.13.2 ( downloaded from https://nodejs.org/dist/v16.13.2/ during installation).  
+**If your current OS version is lower than Windows 10**, NodeJS 12 only will be install (https://nodejs.org/download/release/v12.22.9/)  
 - openssl 1.1.1h ( from https://slproweb.com/products/Win32OpenSSL.html ).  
 - support of X64 and X86 Windows version (Windows 10 X64 and Windows 7 X86 tested).  
 - All packages are installed under a root directory. You choose your root directory at the time of installation.  
 - Signal K can start as windows service if you choose it at the time of installation.  
 - You can re-run the installer several times.  
-- HTML installation help built with https://markdowntohtml.com/
+- HTML installation help built with https://github.com/nea/MarkdownViewerPlusPlus
   
-**How to install Signal K server node:**  
+# How to install Signal K server node  
 - Download installer at https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe  
 - You can verify the checksum of the exec file at https://github.com/SignalK/signalk-server-windows/releases/latest/download/SHA256SUMS.txt  
 `Get-FileHash .\signalk-server-setup.exe -Algorithm SHA256 | Format-List`  
@@ -75,7 +82,7 @@ Then reopen you web browser at URL: http://localhost:3000 and enter your admin a
 Then check out the website:  http://signalk.org/ or https://github.com/SignalK/signalk-server-node for more informations.  
 Or ask for support at http://slack-invite.signalk.org/ in channel #support-windows
   
-**Software structure:**  
+# Software structure  
 + `c:\signalk` This is the root directory that you choosed at install. All components are under this root directory.  
     - `readme.html` minimal help file of installer.  
     - `screenshots` screenshot for the html help file.  
@@ -85,7 +92,7 @@ Or ask for support at http://slack-invite.signalk.org/ in channel #support-windo
     - `signalkhome` home directory of Signal K server.  
         - `.signalk` The configuration of your server is stored in this folder.  
   
-**The tools to manage server (located in `tools` directory):**  
+# The tools to manage server (located in "tools" directory)  
 - `SignalK-CLI.lnk` open a command line windows with environment prepared for running Signal K. You do not use it if the signalk service is running.  
 - `SignalK-GUI.URL` open the web GUI of Signal K server in your web browser.  
 - `start-signalk-server-services.cmd` start or restart the Signal K service, you must `Run as administrator` this script.  
@@ -93,26 +100,44 @@ Or ask for support at http://slack-invite.signalk.org/ in channel #support-windo
 - `remove-signalk-server-services.cmd` remove the Signal K windows service, use this before delete the root directory. You must `Run as administrator` this script.  
 - `create-signalk-server-services.cmd` create the Signal K windows service if you didn't choose it at installation. Cannot be re-run if `tools\daemon` directory exist. You must `Run as administrator` this script.  
   
-**Delete all of your Signal K server:**  
+# Upgrade NodeJS  
+Since the installer in version 1.0.0, NodeJS is provided in version 16.  
+If you have already installed Signal K with a previous version (with NodeJS version 10),  
+it is recommended to make a new installation and then restore the configuration of your Signal K server later.  
+- Stop your Signal K server `stop-signalk-server-services.cmd`.  
+- Remove the Signal K service `remove-signalk-server-services.cmd`.  
+- Close all windows related to signal K.  
+- Rename your Signal K root directory: e.g. `c:\signalk` to `c:\signalk10`.  
+This way, you will keep your Signal K server configuration in a safe place.  
+You can also `Backup` your Signal K server configuration in GUI server: `Server` then `Backup/Restore`.  
+See also the tips here, about plugin compatibility: [Updating to Node.js-16](https://github.com/SignalK/signalk-server/wiki/Updating-to-Node.js-16)
+- Start installer and install Signal K in the original directory: e.g. `c:\signalk`.  
+- Start the Signal K server and check first without any plugins.  
+- If everything is OK, reinstall your plugins, restore your previous configuration with the `Backup/Restore` function  
+or by copying the saved settings files located in `.signalk` directory from your renamed directory.  
+  
+# Delete all of your Signal K server  
 - This installation is completely free of windows registry keys.  
 - First of all, if you installed as service, `Run as administrator` the `remove-signalk-server-services.cmd` script in tools dirrectory.  
 - You can then safely delete the root directory e.g. `c:\signalk`  
 - And that's all !  
   
-**Rebuild install kit:**  
+# Rebuild install kit  
 - Clone Github project: `git clone https://github.com/SignalK/signalk-server-windows.git`  
 - Install `nsis-3.06.1-setup.exe` located in src folder.  
 - Extract `nsis-3.06.1-log.zip` located in src folder.  
 - Copy the content of extracted files in the folder of NSIS install directory.  
+- Extract `NSISunzU.zip` located in src folder.  
+- Copy the `NSISunzU\Plugin unicode\nsisunz.dll` file of extracted files in the folder of NSIS install directory `Plugins\x86-unicode\nsisunz.dll`.  
 - Run NSIS.  
 - Open `NSIS\signalk-server.nsi` file in NSIS.  
 - Select `Script` `Recompile`
 - The new compiled install kit is located in `output` directory.  
   
-**Credits:**
+# Credits  
 - Openssl for Windows https://slproweb.com/products/Win32OpenSSL.html  
 - NodeJs https://nodejs.org/  
-- MarkDown to HTML https://markdowntohtml.com/  
+- MarkDown to HTML https://github.com/nea/MarkdownViewerPlusPlus  
 - Signal K http://signalk.org/
 - Wget for Windows https://eternallybored.org/misc/wget/
 - NodeJs windows service https://www.npmjs.com/package/node-windows

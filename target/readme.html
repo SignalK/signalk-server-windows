@@ -1,98 +1,175 @@
-<p><strong>All in one Windows installer  for Signal K server node <a href="http://signalk.org/">http://signalk.org/</a></strong>  </p>
-<hr>
-<p><strong>Prerequisite:</strong>  </p>
-<ul>
-<li>Internet connection during setup process  </li>
-</ul>
-<p><strong>What&#39;s provide with this installer:</strong>  </p>
-<ul>
-<li>The latest version of the Signal K server downloaded during installation.  </li>
-<li>node js 10.23.0 ( downloaded from <a href="https://nodejs.org/dist/v10.23.0/">https://nodejs.org/dist/v10.23.0/</a> during installation).  </li>
-<li>openssl 1.1.1h ( from <a href="https://slproweb.com/products/Win32OpenSSL.html">https://slproweb.com/products/Win32OpenSSL.html</a> ).  </li>
-<li>support of X64 and X86 Windows version (Windows 10 X64 and Windows 7 X86 tested).  </li>
-<li>All packages are installed under a root directory. You choose your root directory at the time of installation.  </li>
-<li>Signal K can start as windows service if you choose it at the time of installation.  </li>
-<li>You can re-run the installer several times.  </li>
-<li>HTML installation help built with <a href="https://markdowntohtml.com/">https://markdowntohtml.com/</a></li>
-</ul>
-<p><strong>How to install Signal K server node:</strong>  </p>
-<ul>
-<li>Download installer at <a href="https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe">https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe</a>  </li>
-<li>You can verify the checksum of the exec file at <a href="https://github.com/SignalK/signalk-server-windows/releases/latest/download/SHA256SUMS.txt">https://github.com/SignalK/signalk-server-windows/releases/latest/download/SHA256SUMS.txt</a><br><code>Get-FileHash .\signalk-server-setup.exe -Algorithm SHA256 | Format-List</code>  </li>
-<li><p>Execute <code>signalk-server-setup.exe</code>.<br>Some anti-virus software considers that there are viruses in the installer. These are false positives.<br>You may need to add the installer in your exceptions, it is sometimes quarantined.<br>Please submit this file to your anti-virus support for scanning and whitelisting.<br><img src="screenshots/Install-Welcome.png" alt="Install-Welcome">  </p>
-</li>
-<li><p>Select your root directory.<br>Even if this is not the Windows specification, it is better not to choose <code>c:\program files</code> to avoid limited permissions in this folder.<br>Instead, choose <code>c:\signalk</code> or <code>d:\signalk</code>.<br><img src="screenshots/Install-SelectDir.png" alt="Install-SelectDir">  </p>
-</li>
-<li><p>Select the components to be installed.<br>The <code>Signal K as services</code> option is selected by default, this is the most interesting option for all users. If you deselect this option, you will have to keep a Windows command line open to run the server.<br><img src="screenshots/Install-SelectComponents.png" alt="Install-SelectComponents">  </p>
-</li>
-<li><p>Then click <code>Install</code> button<br><img src="screenshots/Install-Progress.png" alt="Install-Progress">  </p>
-</li>
-<li><p>Several windows will open successively during the installation.<br><img src="screenshots/Install-Progress-Download-nodejs.png" alt="Install-Progress-Download-nodejs"><br><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK"><br><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows">  </p>
-</li>
-<li><p>The <code>Signal K as services</code> will bring up 3 message boxes asking permission to install the Windows service.<br>Answer with <code>OK</code>.  </p>
-</li>
-<li><p>At the end, check log if no errors and close the installer with <code>Close</code> button.<br><img src="screenshots/Install-Finished.png" alt="Install-Finished"><br>The install log are saved to file <code>install.log</code> in the root of your install directory.  </p>
-</li>
-</ul>
-<p>Your Signal K server is now installed.<br>If you have select <code>Desktop shortcuts</code>, you will find at least 1 icons on your desktop:<br><img src="screenshots/Desktop-shortcuts.png" alt="Desktop-shortcuts">  </p>
-<ul>
-<li><code>Start Signal K Service</code> icon will start the Signal K service, you must <code>Run as administrator</code> this icon.<br>If you don&#39;t want to have to select every time <code>Run as Administrator</code>, in properties of the shortcut, you have a options button <code>Advanced...</code>, click and then select <code>Run as administrator</code>.<br>After that, You will just have to answer <code>Yes</code> on the UAC (User Access Control) question when you clic on this icon.  </li>
-<li><code>SignalK-GUI</code> icon open the web GUI of Signal K server in your web browser.  </li>
-<li><code>Signal K CLI</code> icon will open a command line windows with environment prepared for running Signal K.<br>This shortcut is most for advanced users.  </li>
-</ul>
-<p>The <code>Signal K server</code> Windows service is in <code>manual</code> mode after installation, to prevent the Signal K server from starting every time you start your computer.<br>To start the Signal K server Windows service, use the shortcut on the desktop <code>Start Signal K Service</code> or by the script <code>start-signalk-server-services.cmd</code> in tools directory.<br>Caution, these commands must be <code>Run as administrator</code>.  </p>
-<p>When the Signal K server has started by service or CLI, wait 20 to 30 seconds for the server to finish booting.<br>Then open you web browser at URL: <a href="http://localhost:3000">http://localhost:3000</a> or use the desktop shortcut <code>SignalK GUI</code>.  </p>
-<p>The very first thing to do after installing and starting the server, is to create an admin user in the web GUI.<br>Go to <code>Security</code> =&gt; <code>User</code> =&gt; <code>Create an admin account</code>
-After that, restart the server by click on desktop icon <code>Start Signal K Service</code>.<br>This command will stop the Windows service and restart it with user security enabled.<br>Then reopen you web browser at URL: <a href="http://localhost:3000">http://localhost:3000</a> and enter your admin account.  </p>
-<p>Then check out the website:  <a href="http://signalk.org/">http://signalk.org/</a> or <a href="https://github.com/SignalK/signalk-server-node">https://github.com/SignalK/signalk-server-node</a> for more informations.<br>Or ask for support at <a href="http://slack-invite.signalk.org/">http://slack-invite.signalk.org/</a> in channel #support-windows</p>
-<p><strong>Software structure:</strong>  </p>
-<ul>
-<li><code>c:\signalk</code> This is the root directory that you choosed at install. All components are under this root directory.  <ul>
-<li><code>readme.html</code> minimal help file of installer.  </li>
-<li><code>screenshots</code> screenshot for the html help file.  </li>
-<li><code>nodejs</code> binary and modules for node js.  </li>
-<li><code>openssl</code> binary for openssl.  </li>
-<li><code>tools</code> Somme tools scripts to start, stop to manage your server (see below).  </li>
-<li><code>signalkhome</code> home directory of Signal K server.  <ul>
-<li><code>.signalk</code> The configuration of your server is stored in this folder.  </li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p><strong>The tools to manage server (located in <code>tools</code> directory):</strong>  </p>
-<ul>
-<li><code>SignalK-CLI.lnk</code> open a command line windows with environment prepared for running Signal K. You do not use it if the signalk service is running.  </li>
-<li><code>SignalK-GUI.URL</code> open the web GUI of Signal K server in your web browser.  </li>
-<li><code>start-signalk-server-services.cmd</code> start or restart the Signal K service, you must <code>Run as administrator</code> this script.  </li>
-<li><code>stop-signalk-server-services.cmd</code> stop the Signal K service, you must <code>Run as administrator</code> this script.  </li>
-<li><code>remove-signalk-server-services.cmd</code> remove the Signal K windows service, use this before delete the root directory. You must <code>Run as administrator</code> this script.  </li>
-<li><code>create-signalk-server-services.cmd</code> create the Signal K windows service if you didn&#39;t choose it at installation. Cannot be re-run if <code>tools\daemon</code> directory exist. You must <code>Run as administrator</code> this script.  </li>
-</ul>
-<p><strong>Delete all of your Signal K server:</strong>  </p>
-<ul>
-<li>This installation is completely free of windows registry keys.  </li>
-<li>First of all, if you installed as service, <code>Run as administrator</code> the <code>remove-signalk-server-services.cmd</code> script in tools dirrectory.  </li>
-<li>You can then safely delete the root directory e.g. <code>c:\signalk</code>  </li>
-<li>And that&#39;s all !  </li>
-</ul>
-<p><strong>Rebuild install kit:</strong>  </p>
-<ul>
-<li>Clone Github project: <code>git clone https://github.com/SignalK/signalk-server-windows.git</code>  </li>
-<li>Install <code>nsis-3.06.1-setup.exe</code> located in src folder.  </li>
-<li>Extract <code>nsis-3.06.1-log.zip</code> located in src folder.  </li>
-<li>Copy the content of extracted files in the folder of NSIS install directory.  </li>
-<li>Run NSIS.  </li>
-<li>Open <code>NSIS\signalk-server.nsi</code> file in NSIS.  </li>
-<li>Select <code>Script</code> <code>Recompile</code></li>
-<li>The new compiled install kit is located in <code>output</code> directory.  </li>
-</ul>
-<p><strong>Credits:</strong></p>
-<ul>
-<li>Openssl for Windows <a href="https://slproweb.com/products/Win32OpenSSL.html">https://slproweb.com/products/Win32OpenSSL.html</a>  </li>
-<li>NodeJs <a href="https://nodejs.org/">https://nodejs.org/</a>  </li>
-<li>MarkDown to HTML <a href="https://markdowntohtml.com/">https://markdowntohtml.com/</a>  </li>
-<li>Signal K <a href="http://signalk.org/">http://signalk.org/</a></li>
-<li>Wget for Windows <a href="https://eternallybored.org/misc/wget/">https://eternallybored.org/misc/wget/</a></li>
-<li>NodeJs windows service <a href="https://www.npmjs.com/package/node-windows">https://www.npmjs.com/package/node-windows</a></li>
-</ul>
+<!DOCTYPE html []>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="MarkdownViewer++" />
+    <title>readme.md</title>
+    <style type="text/css">
+            
+/* Avoid page breaks inside the most common attributes, especially for exports (i.e. PDF) */
+td, h1, h2, h3, h4, h5, p, ul, ol, li {
+    page-break-inside: avoid; 
+}
+
+        </style>
+  </head>
+  <body>
+    <p>
+      <strong>All in one Windows installer v1.0.0 for Signal K server node <a href="http://signalk.org/">http://signalk.org/</a></strong>
+    </p>
+    <hr />
+    <h1 id="prerequisite">Prerequisite</h1>
+    <ul>
+      <li>Internet connection during setup process</li>
+      <li>
+        <strong>If you have already installed Signal K</strong> with a previous version of the installer with a version of NodeJS lower than 16,<br />
+you will see a windows like this:<br /><img src="screenshots/Install-CheckNode.png" alt="Install-SelectDir" /><br />
+Please see <a href="#upgrade-nodejs">Upgrade NodeJS</a> before !</li>
+      <li>
+        <strong>If your current OS version is lower than Windows 10</strong>,<br />
+NodeJS 12 will be installed instead of NodeJS 16 with limited Signal K server support ( Windows 7 is end of life ).</li>
+    </ul>
+    <h1 id="whats-provide-with-this-installer">What's provide with this installer</h1>
+    <ul>
+      <li>The latest version of the Signal K server downloaded during installation.</li>
+      <li>NodeJS 16.13.2 ( downloaded from <a href="https://nodejs.org/dist/v16.13.2/">https://nodejs.org/dist/v16.13.2/</a> during installation).<br /><strong>If your current OS version is lower than Windows 10</strong>, NodeJS 12 only will be install (<a href="https://nodejs.org/download/release/v12.22.9/">https://nodejs.org/download/release/v12.22.9/</a>)</li>
+      <li>openssl 1.1.1h ( from <a href="https://slproweb.com/products/Win32OpenSSL.html">https://slproweb.com/products/Win32OpenSSL.html</a> ).</li>
+      <li>support of X64 and X86 Windows version (Windows 10 X64 and Windows 7 X86 tested).</li>
+      <li>All packages are installed under a root directory. You choose your root directory at the time of installation.</li>
+      <li>Signal K can start as windows service if you choose it at the time of installation.</li>
+      <li>You can re-run the installer several times.</li>
+      <li>HTML installation help built with <a href="https://github.com/nea/MarkdownViewerPlusPlus">https://github.com/nea/MarkdownViewerPlusPlus</a></li>
+    </ul>
+    <h1 id="how-to-install-signal-k-server-node">How to install Signal K server node</h1>
+    <ul>
+      <li>
+        <p>Download installer at <a href="https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe">https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe</a></p>
+      </li>
+      <li>
+        <p>You can verify the checksum of the exec file at <a href="https://github.com/SignalK/signalk-server-windows/releases/latest/download/SHA256SUMS.txt">https://github.com/SignalK/signalk-server-windows/releases/latest/download/SHA256SUMS.txt</a><br /><code>Get-FileHash .\signalk-server-setup.exe -Algorithm SHA256 | Format-List</code></p>
+      </li>
+      <li>
+        <p>Execute <code>signalk-server-setup.exe</code>.<br />
+Some anti-virus software considers that there are viruses in the installer. These are false positives.<br />
+You may need to add the installer in your exceptions, it is sometimes quarantined.<br />
+Please submit this file to your anti-virus support for scanning and whitelisting.<br /><img src="screenshots/Install-Welcome.png" alt="Install-Welcome" /></p>
+      </li>
+      <li>
+        <p>Select your root directory.<br />
+Even if this is not the Windows specification, it is better not to choose <code>c:\program files</code> to avoid limited permissions in this folder.<br />
+Instead, choose <code>c:\signalk</code> or <code>d:\signalk</code>.<br /><img src="screenshots/Install-SelectDir.png" alt="Install-SelectDir" /></p>
+      </li>
+      <li>
+        <p>Select the components to be installed.<br />
+The <code>Signal K as services</code> option is selected by default, this is the most interesting option for all users. If you deselect this option, you will have to keep a Windows command line open to run the server.<br /><img src="screenshots/Install-SelectComponents.png" alt="Install-SelectComponents" /></p>
+      </li>
+      <li>
+        <p>Then click <code>Install</code> button<br /><img src="screenshots/Install-Progress.png" alt="Install-Progress" /></p>
+      </li>
+      <li>
+        <p>Several windows will open successively during the installation.<br /><img src="screenshots/Install-Progress-Download-nodejs.png" alt="Install-Progress-Download-nodejs" /><br /><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK" /><br /><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows" /></p>
+      </li>
+      <li>
+        <p>The <code>Signal K as services</code> will bring up 3 message boxes asking permission to install the Windows service.<br />
+Answer with <code>OK</code>.</p>
+      </li>
+      <li>
+        <p>At the end, check log if no errors and close the installer with <code>Close</code> button.<br /><img src="screenshots/Install-Finished.png" alt="Install-Finished" /><br />
+The install log are saved to file <code>install.log</code> in the root of your install directory.</p>
+      </li>
+    </ul>
+    <p>Your Signal K server is now installed.<br />
+If you have select <code>Desktop shortcuts</code>, you will find at least 1 icons on your desktop:<br /><img src="screenshots/Desktop-shortcuts.png" alt="Desktop-shortcuts" /></p>
+    <ul>
+      <li>
+        <code>Start Signal K Service</code> icon will start the Signal K service, you must <code>Run as administrator</code> this icon.<br />
+If you don't want to have to select every time <code>Run as Administrator</code>, in properties of the shortcut, you have a options button <code>Advanced...</code>, click and then select <code>Run as administrator</code>.<br />
+After that, You will just have to answer <code>Yes</code> on the UAC (User Access Control) question when you clic on this icon.</li>
+      <li>
+        <code>SignalK-GUI</code> icon open the web GUI of Signal K server in your web browser.</li>
+      <li>
+        <code>Signal K CLI</code> icon will open a command line windows with environment prepared for running Signal K.<br />
+This shortcut is most for advanced users.</li>
+    </ul>
+    <p>The <code>Signal K server</code> Windows service is in <code>manual</code> mode after installation, to prevent the Signal K server from starting every time you start your computer.<br />
+To start the Signal K server Windows service, use the shortcut on the desktop <code>Start Signal K Service</code> or by the script <code>start-signalk-server-services.cmd</code> in tools directory.<br />
+Caution, these commands must be <code>Run as administrator</code>.</p>
+    <p>When the Signal K server has started by service or CLI, wait 20 to 30 seconds for the server to finish booting.<br />
+Then open you web browser at URL: <a href="http://localhost:3000">http://localhost:3000</a> or use the desktop shortcut <code>SignalK GUI</code>.</p>
+    <p>The very first thing to do after installing and starting the server, is to create an admin user in the web GUI.<br />
+Go to <code>Security</code> =&gt; <code>User</code> =&gt; <code>Create an admin account</code>
+After that, restart the server by click on desktop icon <code>Start Signal K Service</code>.<br />
+This command will stop the Windows service and restart it with user security enabled.<br />
+Then reopen you web browser at URL: <a href="http://localhost:3000">http://localhost:3000</a> and enter your admin account.</p>
+    <p>Then check out the website:  <a href="http://signalk.org/">http://signalk.org/</a> or <a href="https://github.com/SignalK/signalk-server-node">https://github.com/SignalK/signalk-server-node</a> for more informations.<br />
+Or ask for support at <a href="http://slack-invite.signalk.org/">http://slack-invite.signalk.org/</a> in channel #support-windows</p>
+    <h1 id="software-structure">Software structure</h1>
+    <ul>
+      <li>
+        <code>c:\signalk</code> This is the root directory that you choosed at install. All components are under this root directory.
+<ul><li><code>readme.html</code> minimal help file of installer.</li><li><code>screenshots</code> screenshot for the html help file.</li><li><code>nodejs</code> binary and modules for node js.</li><li><code>openssl</code> binary for openssl.</li><li><code>tools</code> Somme tools scripts to start, stop to manage your server (see below).</li><li><code>signalkhome</code> home directory of Signal K server.
+<ul><li><code>.signalk</code> The configuration of your server is stored in this folder.</li></ul></li></ul></li>
+    </ul>
+    <h1 id="the-tools-to-manage-server-located-in-tools-directory">The tools to manage server (located in "tools" directory)</h1>
+    <ul>
+      <li>
+        <code>SignalK-CLI.lnk</code> open a command line windows with environment prepared for running Signal K. You do not use it if the signalk service is running.</li>
+      <li>
+        <code>SignalK-GUI.URL</code> open the web GUI of Signal K server in your web browser.</li>
+      <li>
+        <code>start-signalk-server-services.cmd</code> start or restart the Signal K service, you must <code>Run as administrator</code> this script.</li>
+      <li>
+        <code>stop-signalk-server-services.cmd</code> stop the Signal K service, you must <code>Run as administrator</code> this script.</li>
+      <li>
+        <code>remove-signalk-server-services.cmd</code> remove the Signal K windows service, use this before delete the root directory. You must <code>Run as administrator</code> this script.</li>
+      <li>
+        <code>create-signalk-server-services.cmd</code> create the Signal K windows service if you didn't choose it at installation. Cannot be re-run if <code>tools\daemon</code> directory exist. You must <code>Run as administrator</code> this script.</li>
+    </ul>
+    <h1 id="upgrade-nodejs">Upgrade NodeJS</h1>
+    <p>Since the installer in version 1.0.0, NodeJS is provided in version 16.<br />
+If you have already installed Signal K with a previous version (with NodeJS version 10),<br />
+it is recommended to make a new installation and then restore the configuration of your Signal K server later.</p>
+    <ul>
+      <li>Stop your Signal K server <code>stop-signalk-server-services.cmd</code>.</li>
+      <li>Remove the Signal K service <code>remove-signalk-server-services.cmd</code>.</li>
+      <li>Close all windows related to signal K.</li>
+      <li>Rename your Signal K root directory: e.g. <code>c:\signalk</code> to <code>c:\signalk10</code>.<br />
+This way, you will keep your Signal K server configuration in a safe place.<br />
+You can also <code>Backup</code> your Signal K server configuration in GUI server: <code>Server</code> then <code>Backup/Restore</code>.<br />
+See also the tips here, about plugin compatibility: <a href="https://github.com/SignalK/signalk-server/wiki/Updating-to-Node.js-16">Updating to Node.js-16</a></li>
+      <li>Start installer and install Signal K in the original directory: e.g. <code>c:\signalk</code>.</li>
+      <li>Start the Signal K server and check first without any plugins.</li>
+      <li>If everything is OK, reinstall your plugins, restore your previous configuration with the <code>Backup/Restore</code> function<br />
+or by copying the saved settings files located in <code>.signalk</code> directory from your renamed directory.</li>
+    </ul>
+    <h1 id="delete-all-of-your-signal-k-server">Delete all of your Signal K server</h1>
+    <ul>
+      <li>This installation is completely free of windows registry keys.</li>
+      <li>First of all, if you installed as service, <code>Run as administrator</code> the <code>remove-signalk-server-services.cmd</code> script in tools dirrectory.</li>
+      <li>You can then safely delete the root directory e.g. <code>c:\signalk</code></li>
+      <li>And that's all !</li>
+    </ul>
+    <h1 id="rebuild-install-kit">Rebuild install kit</h1>
+    <ul>
+      <li>Clone Github project: <code>git clone https://github.com/SignalK/signalk-server-windows.git</code></li>
+      <li>Install <code>nsis-3.06.1-setup.exe</code> located in src folder.</li>
+      <li>Extract <code>nsis-3.06.1-log.zip</code> located in src folder.</li>
+      <li>Copy the content of extracted files in the folder of NSIS install directory.</li>
+      <li>Extract <code>NSISunzU.zip</code> located in src folder.</li>
+      <li>Copy the <code>NSISunzU\Plugin unicode\nsisunz.dll</code> file of extracted files in the folder of NSIS install directory <code>Plugins\x86-unicode\nsisunz.dll</code>.</li>
+      <li>Run NSIS.</li>
+      <li>Open <code>NSIS\signalk-server.nsi</code> file in NSIS.</li>
+      <li>Select <code>Script</code><code>Recompile</code></li>
+      <li>The new compiled install kit is located in <code>output</code> directory.</li>
+    </ul>
+    <h1 id="credits">Credits</h1>
+    <ul>
+      <li>Openssl for Windows <a href="https://slproweb.com/products/Win32OpenSSL.html">https://slproweb.com/products/Win32OpenSSL.html</a></li>
+      <li>NodeJs <a href="https://nodejs.org/">https://nodejs.org/</a></li>
+      <li>MarkDown to HTML <a href="https://github.com/nea/MarkdownViewerPlusPlus">https://github.com/nea/MarkdownViewerPlusPlus</a></li>
+      <li>Signal K <a href="http://signalk.org/">http://signalk.org/</a></li>
+      <li>Wget for Windows <a href="https://eternallybored.org/misc/wget/">https://eternallybored.org/misc/wget/</a></li>
+      <li>NodeJs windows service <a href="https://www.npmjs.com/package/node-windows">https://www.npmjs.com/package/node-windows</a></li>
+    </ul>
+  </body>
+</html>
