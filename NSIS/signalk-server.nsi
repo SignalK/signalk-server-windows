@@ -7,6 +7,7 @@
   !include "tools.nsh"
   !include x64.nsh
   !include WinVer.nsh
+  !include nsDialogs.nsh
 ;======================================================
 ;Include Modern UI
   !include "MUI2.nsh"
@@ -19,11 +20,21 @@
   InstallDir "c:\signalk"
   RequestExecutionLevel admin ; user | admin 
   !define MUI_ICON "..\target\tools\signalk.ico"
+;  !define MUI_HEADERIMAGE
+;  !define MUI_HEADERIMAGE_BITMAP "signal-k-logo-image.bmp" ; 150x57 pixels
+;  !define MUI_HEADERIMAGE_BITMAP_NOSTRETCH
+;  !define MUI_HEADERIMAGE_RIGHT
+;  !define MUI_WELCOMEFINISHPAGE_BITMAP "xxx.bmp" ; 164x314 pixels
+;  !define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
 ;======================================================
 ;Pages
+;internal_page_type [pre_function] [show_function] [leave_function] [/ENABLECANCEL]
   !insertmacro MUI_PAGE_WELCOME
+;  !define MUI_PAGE_CUSTOMFUNCTION_PRE wel_pre
+;  !define MUI_PAGE_CUSTOMFUNCTION_SHOW wel_show
   !insertmacro MUI_PAGE_DIRECTORY
 ;  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
+  Page custom nodejsAlertPre
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_INSTFILES
 
@@ -92,41 +103,13 @@
   !macroend
 
 ;======================================================
-  Function .onVerifyInstDir
-    Call SetGlobalVars
-    ${If} ${FileExists} "$NODE_PATH\node.exe"
-      StrCpy $NODE_INSTALL '1'
-      StrCpy $NODE_UPGRADE '1'
-      nsExec::ExecToStack '"$NODE_PATH\node.exe" -v'
-      Pop $0 # return value/error/timeout
-      Pop $1 # printed text, up to ${NSIS_MAX_STRLEN}
-      StrCpy $NODE_INSTALLED $1
-      DetailPrint 'nodejs detected: "$NODE_PATH\node.exe" in version: $NODE_INSTALLED'
-      LogText "Return code: $0"
-      ${StrContains} $0 "$NODE_SHORT_VERSION" $NODE_INSTALLED
-      StrCmp $0 "" noinstall
-      StrCpy $NODE_INSTALL '1'
-      StrCpy $NODE_UPGRADE '1'
-      Goto done
-      noinstall:
-      StrCpy $NODE_INSTALL '0'
-      StrCpy $NODE_UPGRADE '0'
-      done:
-    ${Else}
-      StrCpy $NODE_INSTALL '1'
-      StrCpy $NODE_UPGRADE '0'
-    ${EndIf}
-    LogText "NODE_INSTALL: '$NODE_INSTALL' NODE_UPGRADE: '$NODE_UPGRADE'"
-  FunctionEnd
-;======================================================
   Function .onInit
     SetOutPath $INSTDIR
     LogSet on
     SetDetailsView show
-    ;Call SetGlobalVars
     LogText "Signal K installer version: ${INST_VERSION}"
     ${IfNot} ${AtLeastWin10}
-      MessageBox MB_ICONEXCLAMATION|MB_OK "Your current version of Windows is lower than Windows 10,$\nNodeJS 12 will be installed instead of NodeJS 16 with limited Signal K server support (> 1.40.0)."
+      MessageBox MB_ICONEXCLAMATION|MB_OK "Your current version of Windows is lower than Windows 10,$\nNodeJS 12 will be installed instead of NodeJS 16.$\nLimited support for Signal K server versions > 1.40.0."
       LogText "Windows version < 10 detected, install NodeJS 12"
     ${EndIf}
     LogSet off
@@ -388,23 +371,6 @@
   Section "Extract nodejs" SecExtractJS
     LogSet on
     SetDetailsView show
-    StrCmp $NODE_INSTALL '1' installnode
-    SetOutPath $INSTDIR
-    File "/oname=readme-${INST_VERSION}.html" "..\target\readme.html"
-    ExecShell "open" "$INSTDIR\readme-${INST_VERSION}.html"
-    System::Call "User32::SetWindowPos(i $HWNDPARENT, i -1, i 0, i 0, i 0, i 0, i 3) i." ; Keep focus
-    DetailPrint ""
-    DetailPrint "A different major version of NodeJs is detected: $NODE_INSTALLED"
-    DetailPrint "in $INSTDIR"
-    DetailPrint "and cannot be updated to $NODE_VERSION"
-    DetailPrint "Please see upgrade section in"
-    DetailPrint "readme-${INST_VERSION}.html page that has just opened"
-    DetailPrint "Or close and restart the installer"
-    DetailPrint "without checking the 'Extract nodejs' box"
-    DetailPrint "to upgrade only Signal K (not recommended)"
-    MessageBox MB_ICONSTOP|MB_OK "A different major version of NodeJs is detected in the installation path and cannot be updated"
-    Abort
-    installnode:
     SetOutPath $INSTDIR
     File /r ..\target\wget.exe
     DetailPrint "Extract wget.exe to $INSTDIR"
@@ -454,16 +420,12 @@
     Delete "$INSTDIR\wget.exe"
     ${If} ${RunningX64}
       DetailPrint 'RMDir /r "$INSTDIR\$NODE64_ORG_DIR"'
-      SetDetailsView hide
       RMDir /r "$INSTDIR\$NODE64_ORG_DIR"
     ${Else}
       DetailPrint 'RMDir /r "$INSTDIR\$NODE86_ORG_DIR"'
-      SetDetailsView hide
       RMDir /r "$INSTDIR\$NODE86_ORG_DIR"
     ${EndIf}
-    SetDetailsView show
     DetailPrint "Cleaning up temporary files completed"
-;    done:
   SectionEnd
 
   Section "Extract openssl" SecExtractSSL
@@ -500,7 +462,6 @@
 
   Section "install signalk-server" SecSkInstall
     LogSet on
-;    Call SetGlobalVars
     ${If} $W7_DETECTED == "1"
       ExecWait '"$TOOLS_PATH\npm-install-serial.cmd"' $0
       DetailPrint "npm install -g --unsafe-perm serialport@10.1.0 returned $0"
@@ -519,7 +480,6 @@
   SectionGroup /e "Desktop shortcut" SecShortcuts
     Section "Start service" SecStartService
       LogSet on
-;      Call SetGlobalVars
       DetailPrint "Create desktop shortcut 'Start Signal K Service'"
       CreateShortCut "$DESKTOP\Start Signal K Service.lnk" "$TOOLS_PATH\start-signalk-server-services.cmd" \
         "" "$TOOLS_PATH\signalk.ico" 0 SW_SHOWNORMAL \
@@ -527,14 +487,12 @@
     SectionEnd
     Section "Signal Web GUI" SecSignalkWebGUI
       LogSet on
-;      Call SetGlobalVars
       DetailPrint "Create desktop shortcut 'SignalK-GUI'"
       !insertmacro CreateInternetShortcutWithIcon "$DESKTOP\SignalK-GUI.URL" "http://localhost:3000" "$TOOLS_PATH\signalk.ico" 0
     SectionEnd
 
     Section /o "Signal K CLI" SecSignalkCli
       LogSet on
-;      Call SetGlobalVars
       DetailPrint "Create desktop shortcut 'Signal K CLI'"
       CreateShortCut "$DESKTOP\Signal K CLI.lnk" "cmd" \
         "/k $TOOLS_PATH\signalk-server-cli.cmd" "$TOOLS_PATH\signalk.ico" 0 SW_SHOWNORMAL \
@@ -555,24 +513,68 @@ SectionGroupEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSignalkWebGUI}   "Desktop shortcut to open the web GUI of Signal K server"
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 ;======================================================
-  Function .onSelChange
-    ${If} $0 != ${SecSkService}
-      Return
+Function .onSelChange
+  ${If} $0 != ${SecSkService}
+    Return
+  ${EndIf}
+  SectionGetFlags ${SecSkService} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  IntCmp $0 ${SF_SELECTED} enableShortCut disableShortCut
+  enableShortCut:
+  SectionSetFlags ${SecStartService} ${SF_SELECTED}
+  goto end
+  disableShortCut:
+  SectionSetFlags ${SecStartService} ${SF_RO}
+  end:
+FunctionEnd
+
+Function nodejsAlertPre
+  LogSet on
+  SetDetailsView show
+  Call SetGlobalVars
+  ${If} ${FileExists} "$NODE_PATH\node.exe"
+    StrCpy $NODE_INSTALL '1'
+    StrCpy $NODE_UPGRADE '1'
+    nsExec::ExecToStack '"$NODE_PATH\node.exe" -v'
+    Pop $0 # return value/error/timeout
+    Pop $1 # printed text, up to ${NSIS_MAX_STRLEN}
+    StrCpy $NODE_INSTALLED $1
+    DetailPrint 'nodejs detected: "$NODE_PATH\node.exe" in version: $NODE_INSTALLED'
+    LogText "Return code: $0"
+    ${StrContains} $0 "$NODE_SHORT_VERSION" $NODE_INSTALLED
+    StrCmp $0 "" noinstall
+    StrCpy $NODE_INSTALL '1'
+    StrCpy $NODE_UPGRADE '1'
+    Goto done
+    noinstall:
+    StrCpy $NODE_INSTALL '0'
+    StrCpy $NODE_UPGRADE '0'
+    SectionSetFlags ${SecExtractJS} ${SF_RO}
+    LogText "A different major version of NodeJs is detected: $NODE_INSTALLED in $INSTDIR and cannot be updated to $NODE_VERSION"
+    SetOutPath $INSTDIR
+    ExecShell "open" "https://github.com/SignalK/signalk-server-windows/blob/v${INST_VERSION}/readme.md"
+    System::Call "User32::SetWindowPos(i $HWNDPARENT, i -1, i 0, i 0, i 0, i 0, i 3) i." ; Keep focus
+    !insertmacro MUI_HEADER_TEXT "Node JS version" "Checking the Node JS version"
+    nsDialogs::Create 1018
+    Pop $0
+    ${If} $0 == error
+      Abort
     ${EndIf}
-    SectionGetFlags ${SecSkService} $0
-    IntOp $0 $0 & ${SF_SELECTED}
-    IntCmp $0 ${SF_SELECTED} enableShortCut disableShortCut
-    enableShortCut:
-    SectionSetFlags ${SecStartService} ${SF_SELECTED}
-    goto end
-    disableShortCut:
-    SectionSetFlags ${SecStartService} ${SF_RO}
-    end:
-  FunctionEnd
-
-;Page instfiles "" "" instfilesLeave
-
-;Function instfilesLeave
-;  IfAbort 0 +2
-;    MessageBox MB_OK "user aborted"
-;FunctionEnd
+    ${NSD_CreateLabel} 0 26u 100% 10u "A different major version of NodeJs is detected: $NODE_INSTALLED"
+    Pop $0
+    ${NSD_CreateLabel} 0 36u 100% 10u "in $INSTDIR"
+    Pop $0
+    ${NSD_CreateLabel} 0 46u 100% 10u "and cannot be updated to $NODE_VERSION."
+    Pop $0
+    ${NSD_CreateLabel} 0 60u 100% 10u "Please see upgrade section in readme.md page that has just opened."
+    Pop $0
+    ${NSD_CreateLabel} 0 74u 100% 10u "Or continue to upgrade only Signal K (not recommended)."
+    Pop $0
+    nsDialogs::Show
+  ${Else}
+    StrCpy $NODE_INSTALL '1'
+    StrCpy $NODE_UPGRADE '0'
+  ${EndIf}
+  done:
+  LogText "NODE_INSTALL: '$NODE_INSTALL' NODE_UPGRADE: '$NODE_UPGRADE'"
+FunctionEnd

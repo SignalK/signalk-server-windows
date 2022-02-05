@@ -18,21 +18,18 @@ td, h1, h2, h3, h4, h5, p, ul, ol, li {
       <strong>All in one Windows installer v1.0.0 for Signal K server node <a href="http://signalk.org/">http://signalk.org/</a></strong>
     </p>
     <hr />
-    <p>
-      <strong>Prerequisite:</strong>
-    </p>
+    <h1 id="prerequisite">Prerequisite</h1>
     <ul>
       <li>Internet connection during setup process</li>
       <li>
-        <strong>If you have already installed Signal K</strong> with a previous installer version &lt; 1.0.0 (included NodeJS in version 10),<br />
-see <a href="#Upgrade">Upgrade from NodeJS10 / Installer 0.4.3</a> before !</li>
+        <strong>If you have already installed Signal K</strong> with a previous version of the installer with a version of NodeJS lower than 16,<br />
+you will see a windows like this:<br /><img src="screenshots/Install-CheckNode.png" alt="Install-SelectDir" /><br />
+Please see <a href="#upgrade-nodejs">Upgrade NodeJS</a> before !</li>
       <li>
         <strong>If your current OS version is lower than Windows 10</strong>,<br />
 NodeJS 12 will be installed instead of NodeJS 16 with limited Signal K server support ( Windows 7 is end of life ).</li>
     </ul>
-    <p>
-      <strong>What's provide with this installer:</strong>
-    </p>
+    <h1 id="whats-provide-with-this-installer">What's provide with this installer</h1>
     <ul>
       <li>The latest version of the Signal K server downloaded during installation.</li>
       <li>NodeJS 16.13.2 ( downloaded from <a href="https://nodejs.org/dist/v16.13.2/">https://nodejs.org/dist/v16.13.2/</a> during installation).<br /><strong>If your current OS version is lower than Windows 10</strong>, NodeJS 12 only will be install (<a href="https://nodejs.org/download/release/v12.22.9/">https://nodejs.org/download/release/v12.22.9/</a>)</li>
@@ -43,9 +40,7 @@ NodeJS 12 will be installed instead of NodeJS 16 with limited Signal K server su
       <li>You can re-run the installer several times.</li>
       <li>HTML installation help built with <a href="https://github.com/nea/MarkdownViewerPlusPlus">https://github.com/nea/MarkdownViewerPlusPlus</a></li>
     </ul>
-    <p>
-      <strong>How to install Signal K server node:</strong>
-    </p>
+    <h1 id="how-to-install-signal-k-server-node">How to install Signal K server node</h1>
     <ul>
       <li>
         <p>Download installer at <a href="https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe">https://github.com/SignalK/signalk-server-windows/releases/latest/download/signalk-server-setup.exe</a></p>
@@ -108,18 +103,14 @@ This command will stop the Windows service and restart it with user security ena
 Then reopen you web browser at URL: <a href="http://localhost:3000">http://localhost:3000</a> and enter your admin account.</p>
     <p>Then check out the website:  <a href="http://signalk.org/">http://signalk.org/</a> or <a href="https://github.com/SignalK/signalk-server-node">https://github.com/SignalK/signalk-server-node</a> for more informations.<br />
 Or ask for support at <a href="http://slack-invite.signalk.org/">http://slack-invite.signalk.org/</a> in channel #support-windows</p>
-    <p>
-      <strong>Software structure:</strong>
-    </p>
+    <h1 id="software-structure">Software structure</h1>
     <ul>
       <li>
         <code>c:\signalk</code> This is the root directory that you choosed at install. All components are under this root directory.
 <ul><li><code>readme.html</code> minimal help file of installer.</li><li><code>screenshots</code> screenshot for the html help file.</li><li><code>nodejs</code> binary and modules for node js.</li><li><code>openssl</code> binary for openssl.</li><li><code>tools</code> Somme tools scripts to start, stop to manage your server (see below).</li><li><code>signalkhome</code> home directory of Signal K server.
 <ul><li><code>.signalk</code> The configuration of your server is stored in this folder.</li></ul></li></ul></li>
     </ul>
-    <p>
-      <strong>The tools to manage server (located in <code>tools</code> directory):</strong>
-    </p>
+    <h1 id="the-tools-to-manage-server-located-in-tools-directory">The tools to manage server (located in "tools" directory)</h1>
     <ul>
       <li>
         <code>SignalK-CLI.lnk</code> open a command line windows with environment prepared for running Signal K. You do not use it if the signalk service is running.</li>
@@ -134,9 +125,7 @@ Or ask for support at <a href="http://slack-invite.signalk.org/">http://slack-in
       <li>
         <code>create-signalk-server-services.cmd</code> create the Signal K windows service if you didn't choose it at installation. Cannot be re-run if <code>tools\daemon</code> directory exist. You must <code>Run as administrator</code> this script.</li>
     </ul>
-    <p id="Upgrade">
-      <strong>Upgrade from NodeJS10 / Installer 0.4.3 and below</strong>
-    </p>
+    <h1 id="upgrade-nodejs">Upgrade NodeJS</h1>
     <p>Since the installer in version 1.0.0, NodeJS is provided in version 16.<br />
 If you have already installed Signal K with a previous version (with NodeJS version 10),<br />
 it is recommended to make a new installation and then restore the configuration of your Signal K server later.</p>
@@ -153,18 +142,14 @@ See also the tips here, about plugin compatibility: <a href="https://github.com/
       <li>If everything is OK, reinstall your plugins, restore your previous configuration with the <code>Backup/Restore</code> function<br />
 or by copying the saved settings files located in <code>.signalk</code> directory from your renamed directory.</li>
     </ul>
-    <p>
-      <strong>Delete all of your Signal K server:</strong>
-    </p>
+    <h1 id="delete-all-of-your-signal-k-server">Delete all of your Signal K server</h1>
     <ul>
       <li>This installation is completely free of windows registry keys.</li>
       <li>First of all, if you installed as service, <code>Run as administrator</code> the <code>remove-signalk-server-services.cmd</code> script in tools dirrectory.</li>
       <li>You can then safely delete the root directory e.g. <code>c:\signalk</code></li>
       <li>And that's all !</li>
     </ul>
-    <p>
-      <strong>Rebuild install kit:</strong>
-    </p>
+    <h1 id="rebuild-install-kit">Rebuild install kit</h1>
     <ul>
       <li>Clone Github project: <code>git clone https://github.com/SignalK/signalk-server-windows.git</code></li>
       <li>Install <code>nsis-3.06.1-setup.exe</code> located in src folder.</li>
@@ -177,9 +162,7 @@ or by copying the saved settings files located in <code>.signalk</code> director
       <li>Select <code>Script</code><code>Recompile</code></li>
       <li>The new compiled install kit is located in <code>output</code> directory.</li>
     </ul>
-    <p>
-      <strong>Credits:</strong>
-    </p>
+    <h1 id="credits">Credits</h1>
     <ul>
       <li>Openssl for Windows <a href="https://slproweb.com/products/Win32OpenSSL.html">https://slproweb.com/products/Win32OpenSSL.html</a></li>
       <li>NodeJs <a href="https://nodejs.org/">https://nodejs.org/</a></li>
