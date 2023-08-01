@@ -1,7 +1,7 @@
 
- OpenSSL 1.1.1h 22 Sep 2020
+ OpenSSL 1.1.1u 30 May 2023
 
- Copyright (c) 1998-2020 The OpenSSL Project
+ Copyright (c) 1998-2023 The OpenSSL Project
  Copyright (c) 1995-1998 Eric A. Young, Tim J. Hudson
  All rights reserved.
 

@@ -15,26 +15,26 @@ td, h1, h2, h3, h4, h5, p, ul, ol, li {
   </head>
   <body>
     <p>
-      <strong>All in one Windows installer v1.0.0 for Signal K server node <a href="http://signalk.org/">http://signalk.org/</a></strong>
+      <strong>All in one Windows installer v1.1.0 for Signal K server node <a href="http://signalk.org/">http://signalk.org/</a></strong>
     </p>
     <hr />
     <h1 id="prerequisite">Prerequisite</h1>
     <ul>
       <li>Internet connection during setup process</li>
       <li>
-        <strong>If you have already installed Signal K</strong> with a previous version of the installer with a version of NodeJS lower than 16,<br />
+        <strong>If you have already installed Signal K</strong> with a previous version of the installer with a version of NodeJS lower than 18,<br />
 you will see a windows like this:<br /><img src="screenshots/Install-CheckNode.png" alt="Install-SelectDir" /><br />
 Please see <a href="#upgrade-nodejs">Upgrade NodeJS</a> before !</li>
       <li>
         <strong>If your current OS version is lower than Windows 10</strong>,<br />
-NodeJS 12 will be installed instead of NodeJS 16 with limited Signal K server support ( Windows 7 is end of life ).</li>
+Operating System version prior to Windows 10 are no longer supported with recent versions of Signal K server.</li>
     </ul>
     <h1 id="whats-provide-with-this-installer">What's provide with this installer</h1>
     <ul>
       <li>The latest version of the Signal K server downloaded during installation.</li>
-      <li>NodeJS 16.13.2 ( downloaded from <a href="https://nodejs.org/dist/v16.13.2/">https://nodejs.org/dist/v16.13.2/</a> during installation).<br /><strong>If your current OS version is lower than Windows 10</strong>, NodeJS 12 only will be install (<a href="https://nodejs.org/download/release/v12.22.9/">https://nodejs.org/download/release/v12.22.9/</a>)</li>
-      <li>openssl 1.1.1h ( from <a href="https://slproweb.com/products/Win32OpenSSL.html">https://slproweb.com/products/Win32OpenSSL.html</a> ).</li>
-      <li>support of X64 and X86 Windows version (Windows 10 X64 and Windows 7 X86 tested).</li>
+      <li>NodeJS 18.17.1 ( downloaded from <a href="https://nodejs.org/dist/v18.17.1/">https://nodejs.org/dist/v18.17.1/</a> during installation).</li>
+      <li>openssl 1.1.1u ( from <a href="https://slproweb.com/products/Win32OpenSSL.html">https://slproweb.com/products/Win32OpenSSL.html</a> ).</li>
+      <li>support of X64 and X86 Windows version (Windows 10 X64).</li>
       <li>All packages are installed under a root directory. You choose your root directory at the time of installation.</li>
       <li>Signal K can start as windows service if you choose it at the time of installation.</li>
       <li>You can re-run the installer several times.</li>
@@ -67,7 +67,12 @@ The <code>Signal K as services</code> option is selected by default, this is the
         <p>Then click <code>Install</code> button<br /><img src="screenshots/Install-Progress.png" alt="Install-Progress" /></p>
       </li>
       <li>
-        <p>Several windows will open successively during the installation.<br /><img src="screenshots/Install-Progress-Download-nodejs.png" alt="Install-Progress-Download-nodejs" /><br /><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK" /><br /><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows" /></p>
+        <p>Several windows will open successively during the installation.<br /><img src="screenshots/Install-Progress-Download-nodejs.png" alt="Install-Progress-Download-nodejs" /><br /><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows" /><br /><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK" /><br /><img src="screenshots/Install-Progress-openssl-certificate.png" alt="Install-Progress-openssl-certificate" /></p>
+      </li>
+      <li>
+        <p>To simplify implementation of the https protocol with your Signal K server, a auto-signed certificat is generated at the installation time.<br />
+If you enable ssl mode in the server, your web browser will alert you with the indication of an insecure connection.<br />
+It's not ideal solution but at least it won't lock your Signal K server if you want to try the ssl mode.</p>
       </li>
       <li>
         <p>The <code>Signal K as services</code> will bring up 3 message boxes asking permission to install the Windows service.<br />
@@ -124,19 +129,21 @@ Or ask for support at <a href="http://slack-invite.signalk.org/">http://slack-in
         <code>remove-signalk-server-services.cmd</code> remove the Signal K windows service, use this before delete the root directory. You must <code>Run as administrator</code> this script.</li>
       <li>
         <code>create-signalk-server-services.cmd</code> create the Signal K windows service if you didn't choose it at installation. Cannot be re-run if <code>tools\daemon</code> directory exist. You must <code>Run as administrator</code> this script.</li>
+      <li>
+        <code>generate-certificat.cmd</code> generates a self-signed certificate for the Signal K server in https mode.</li>
     </ul>
     <h1 id="upgrade-nodejs">Upgrade NodeJS</h1>
-    <p>Since the installer in version 1.0.0, NodeJS is provided in version 16.<br />
-If you have already installed Signal K with a previous version (with NodeJS version 10),<br />
+    <p>Since the installer in version 1.1.0, NodeJS is provided in version 18.<br />
+If you've already installed Signal K with an earlier version (e.g. NodeJS 10, 12 or 16),<br />
 it is recommended to make a new installation and then restore the configuration of your Signal K server later.</p>
     <ul>
       <li>Stop your Signal K server <code>stop-signalk-server-services.cmd</code>.</li>
       <li>Remove the Signal K service <code>remove-signalk-server-services.cmd</code>.</li>
       <li>Close all windows related to signal K.</li>
-      <li>Rename your Signal K root directory: e.g. <code>c:\signalk</code> to <code>c:\signalk10</code>.<br />
+      <li>Rename your Signal K root directory: e.g. <code>c:\signalk</code> to <code>c:\signalk-old</code>.<br />
 This way, you will keep your Signal K server configuration in a safe place.<br />
 You can also <code>Backup</code> your Signal K server configuration in GUI server: <code>Server</code> then <code>Backup/Restore</code>.<br />
-See also the tips here, about plugin compatibility: <a href="https://github.com/SignalK/signalk-server/wiki/Updating-to-Node.js-16">Updating to Node.js-16</a></li>
+See also the tips here, about plugin compatibility: <a href="https://github.com/SignalK/signalk-server/wiki/Installing-and-Updating-Node.js">Installing and Updating Node.js</a></li>
       <li>Start installer and install Signal K in the original directory: e.g. <code>c:\signalk</code>.</li>
       <li>Start the Signal K server and check first without any plugins.</li>
       <li>If everything is OK, reinstall your plugins, restore your previous configuration with the <code>Backup/Restore</code> function<br />

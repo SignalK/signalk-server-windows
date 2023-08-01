@@ -13,7 +13,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "1.0.0"
+  !define INST_VERSION "1.1.0"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -65,7 +65,8 @@
   Var /GLOBAL NODE_UPGRADE
   Var /GLOBAL NODE_SHORT_VERSION
   Var /GLOBAL NODE_VERSION
-
+  Var /GLOBAL SIGNALK_NODE_CONFIG_DIR
+  
   Function SetGlobalVars
     LogSet on
     StrCpy $USERPROFILE $INSTDIR\signalkhome
@@ -75,21 +76,17 @@
     StrCpy $OPENSSL_BIN_PATH '$INSTDIR\openssl\bin'
     StrCpy $OPENSSL_CONF '$INSTDIR\openssl\openssl.cnf'
     StrCpy $TOOLS_PATH '$INSTDIR\tools'
+    StrCpy $SIGNALK_NODE_CONFIG_DIR '$USERPROFILE\.signalk'
+
     ${If} ${AtLeastWin10}
-      StrCpy $NODE64_URL 'https://nodejs.org/dist/v16.13.2/node-v16.13.2-win-x64.zip'
-      StrCpy $NODE86_URL 'https://nodejs.org/dist/v16.13.2/node-v16.13.2-win-x86.zip'
-      StrCpy $NODE64_ORG_DIR 'node-v16.13.2-win-x64'
-      StrCpy $NODE86_ORG_DIR 'node-v16.13.2-win-x86'
-      StrCpy $NODE_VERSION 'v16.13.2'
-      StrCpy $NODE_SHORT_VERSION 'v16'
+      StrCpy $NODE64_URL 'https://nodejs.org/dist/v18.17.1/node-v18.17.1-win-x64.zip'
+      StrCpy $NODE86_URL 'https://nodejs.org/dist/v18.17.1/node-v18.17.1-win-x86.zip'
+      StrCpy $NODE64_ORG_DIR 'node-v18.17.1-win-x64'
+      StrCpy $NODE86_ORG_DIR 'node-v18.17.1-win-x86'
+      StrCpy $NODE_VERSION 'v18.17.1'
+      StrCpy $NODE_SHORT_VERSION 'v18'
     ${Else}
-      StrCpy $NODE64_URL 'https://nodejs.org/download/release/v12.22.9/node-v12.22.9-win-x64.zip'
-      StrCpy $NODE86_URL 'https://nodejs.org/download/release/v12.22.9/node-v12.22.9-win-x86.zip'
-      StrCpy $NODE64_ORG_DIR 'node-v12.22.9-win-x64'
-      StrCpy $NODE86_ORG_DIR 'node-v12.22.9-win-x86'
       StrCpy $W7_DETECTED '1'
-      StrCpy $NODE_VERSION 'v12.22.9'
-      StrCpy $NODE_SHORT_VERSION 'v12'
     ${EndIf}
   FunctionEnd
 
@@ -109,8 +106,9 @@
     SetDetailsView show
     LogText "Signal K installer version: ${INST_VERSION}"
     ${IfNot} ${AtLeastWin10}
-      MessageBox MB_ICONEXCLAMATION|MB_OK "Your current version of Windows is lower than Windows 10,$\nNodeJS 12 will be installed instead of NodeJS 16.$\nLimited support for Signal K server versions > 1.40.0."
-      LogText "Windows version < 10 detected, install NodeJS 12"
+      MessageBox MB_ICONEXCLAMATION|MB_OK "Your current version of Windows is lower than Windows 10,$\nOperating System version prior to Windows 10 are no longer supported with recent versions of Signal K server. "
+      LogText "Windows version < 10 detected, installation cancelled "
+      Abort
     ${EndIf}
     LogSet off
   FunctionEnd
@@ -125,9 +123,9 @@
     FileWrite $9 '@ECHO OFF$\r$\n'
     FileWrite $9 '$INSTALL_DRIVE$\r$\n'
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
-    FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
-    FileWrite $9 'set PATH=%NODE_PATH%;$OPENSSL_BIN_PATH;%PATH%$\r$\n'
-    FileWrite $9 'set SIGNALK_NODE_CONFIG_DIR=%USERPROFILE%\.signalk$\r$\n'
+    FileWrite $9 'set NODE_PATH=$NODE_MODULES_PATH$\r$\n'
+    FileWrite $9 'set PATH=$NODE_PATH;$OPENSSL_BIN_PATH;%PATH%$\r$\n'
+    FileWrite $9 'set SIGNALK_NODE_CONFIG_DIR=$SIGNALK_NODE_CONFIG_DIR$\r$\n'
     FileWrite $9 'set SIGNALK_SERVER_IS_UPDATABLE=1$\r$\n'
     FileWrite $9 'set OPENSSL_CONF=$OPENSSL_CONF$\r$\n'
     FileWrite $9 'cd %USERPROFILE%$\r$\n'
@@ -140,14 +138,16 @@
     DetailPrint "Create $USERPROFILE\.npmrc"
     FileOpen  $9  $USERPROFILE\.npmrc w
     FileWrite $9 'cache=$USERPROFILE\npm-cache$\r$\n'
-    FileWrite $9 'tmp=$USERPROFILE\tmp$\r$\n'
     FileWrite $9 'prefix=$NODE_PATH$\r$\n'
     FileWrite $9 '$\r$\n'
     FileClose $9
 
     DetailPrint "Create $TOOLS_PATH\signalk-server-services.js"
     FileOpen  $9  $TOOLS_PATH\signalk-server-services.js w
-    FileWrite $9 'process.env.SIGNALK_NODE_CONFIG_DIR = process.env.USERPROFILE + "\\.signalk"$\r$\n'
+      Push $SIGNALK_NODE_CONFIG_DIR
+      Call ConvertBStoDBS 
+      Pop $R0
+    FileWrite $9 'process.env.SIGNALK_NODE_CONFIG_DIR = "$R0"$\r$\n'
     FileWrite $9 'process.env.SIGNALK_SERVER_IS_UPDATABLE = "1"$\r$\n'
     FileWrite $9 '//process.env.DEBUG = ""$\r$\n'
       Push $OPENSSL_BIN_PATH
@@ -232,8 +232,8 @@
     FileWrite $9 '@ECHO OFF$\r$\n'
     FileWrite $9 '$INSTALL_DRIVE$\r$\n'
     FileWrite $9 'echo Install signalk as service in progress...$\r$\n'
-    FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
-    FileWrite $9 'set "PATH=%NODE_PATH%;%PATH%"$\r$\n'
+    FileWrite $9 'set NODE_PATH=$NODE_MODULES_PATH$\r$\n'
+    FileWrite $9 'set "PATH=$NODE_PATH;%PATH%"$\r$\n'
     FileWrite $9 'cd $TOOLS_PATH$\r$\n'
     FileWrite $9 'node .\install-signalk-server-services.js$\r$\n'
     FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
@@ -291,8 +291,8 @@
     FileWrite $9 'echo Install log saved in $INSTDIR\$LOG_FILE file$\r$\n'
     FileWrite $9 'echo Please wait ...$\r$\n'
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
-    FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
-    FileWrite $9 'set "Path=%NODE_PATH%;%Path%"$\r$\n'
+    FileWrite $9 'set NODE_PATH=$NODE_MODULES_PATH$\r$\n'
+    FileWrite $9 'set "Path=$NODE_PATH;%Path%"$\r$\n'
     FileWrite $9 'set OPENSSL_CONF=$OPENSSL_CONF$\r$\n'
     FileWrite $9 'cd $NODE_PATH$\r$\n'
     FileWrite $9 'echo "start: npm install -g --unsafe-perm  node-windows@1.0.0-beta.5" 1>>$INSTDIR\$LOG_FILE 2>&1$\r$\n'
@@ -316,8 +316,8 @@
     FileWrite $9 'echo Install log saved in $INSTDIR\$LOG_FILE file$\r$\n'
     FileWrite $9 'echo Please wait this may take some time ...$\r$\n'
     FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
-    FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
-    FileWrite $9 'set "Path=%NODE_PATH%;%Path%"$\r$\n'
+    FileWrite $9 'set NODE_PATH=$NODE_MODULES_PATH$\r$\n'
+    FileWrite $9 'set "Path=$NODE_PATH;%Path%"$\r$\n'
     FileWrite $9 'set OPENSSL_CONF=$OPENSSL_CONF$\r$\n'
     FileWrite $9 'cd $NODE_PATH$\r$\n'
     FileWrite $9 'echo "start: npm install -g --unsafe-perm  signalk-server" 1>>$INSTDIR\$LOG_FILE 2>&1$\r$\n'
@@ -332,32 +332,40 @@
     FileWrite $9 '$\r$\n'
     FileClose $9
 
-    ${If} $W7_DETECTED == "1"
-      DetailPrint "Create $TOOLS_PATH\npm-install-serial.cmd for Windows 7"
-      StrCpy $LOG_FILE "npm-inst-serial.log"
-      FileOpen  $9  $TOOLS_PATH\npm-install-serial.cmd w
-      FileWrite $9 '@ECHO OFF$\r$\n'
-      FileWrite $9 '$INSTALL_DRIVE$\r$\n'
-      FileWrite $9 'echo Install alternative package for serial port support in progress...$\r$\n'
-      FileWrite $9 'echo Install log saved in $INSTDIR\$LOG_FILE file$\r$\n'
-      FileWrite $9 'echo Please wait ...$\r$\n'
-      FileWrite $9 'set USERPROFILE=$USERPROFILE$\r$\n'
-      FileWrite $9 'set NODE_PATH=$NODE_PATH$\r$\n'
-      FileWrite $9 'set "Path=%NODE_PATH%;%Path%"$\r$\n'
-      FileWrite $9 'set OPENSSL_CONF=$OPENSSL_CONF$\r$\n'
-      FileWrite $9 'cd $NODE_PATH$\r$\n'
-      FileWrite $9 'echo "start: npm install -g --unsafe-perm serialport@10.1.0" 1>>$INSTDIR\$LOG_FILE 2>&1$\r$\n'
-      FileWrite $9 'call npm install -g --unsafe-perm serialport@10.1.0 1>>$INSTDIR\$LOG_FILE 2>&1$\r$\n'
-      FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
-      FileWrite $9 'exit /b 0$\r$\n'
-      FileWrite $9 ':ERROR$\r$\n'
-      FileWrite $9 'echo An ERROR has occurred.$\r$\n'
-      FileWrite $9 'echo See the $INSTDIR\$LOG_FILE file$\r$\n'
-      FileWrite $9 'pause$\r$\n'
-      FileWrite $9 'exit /b 1$\r$\n'
-      FileWrite $9 '$\r$\n'
-      FileClose $9
-    ${EndIf}
+    DetailPrint "Create $TOOLS_PATH\generate-certificate.cmd"
+    StrCpy $LOG_FILE "generate-certificate.log"
+    FileOpen  $9  $TOOLS_PATH\generate-certificate.cmd w
+    FileWrite $9 '@ECHO OFF$\r$\n'
+    FileWrite $9 '$INSTALL_DRIVE$\r$\n'
+    FileWrite $9 'echo log saved in $INSTDIR\$LOG_FILE file$\r$\n'
+    FileWrite $9 'echo Check if certificate already exist$\r$\n'
+    FileWrite $9 'if exist "$SIGNALK_NODE_CONFIG_DIR\ssl-cert.pem" goto :NOGENCERT$\r$\n'
+    FileWrite $9 'if exist "$SIGNALK_NODE_CONFIG_DIR\ssl-key.pem" goto :NOGENCERT$\r$\n'
+    FileWrite $9 'goto :GENCERT$\r$\n'
+    FileWrite $9 ':NOGENCERT$\r$\n'
+    FileWrite $9 'echo Certificate already exist in directory $SIGNALK_NODE_CONFIG_DIR$\r$\n'
+    FileWrite $9 'echo Certificate already exist in directory $SIGNALK_NODE_CONFIG_DIR >>$INSTDIR\$LOG_FILE$\r$\n'
+    FileWrite $9 'echo Delete the ssl-cert.pem and ssl-key.pem files to generate a new certificate.$\r$\n'
+    FileWrite $9 'echo Delete the ssl-cert.pem and ssl-key.pem files to generate a new certificate. >>$INSTDIR\$LOG_FILE$\r$\n'
+    FileWrite $9 'exit /b 0$\r$\n'
+    FileWrite $9 ':GENCERT$\r$\n'
+    FileWrite $9 'echo Generate certificate in progress...$\r$\n'
+    FileWrite $9 'echo Generatecertificate in progress... >>$INSTDIR\$LOG_FILE$\r$\n'
+    FileWrite $9 'set PATH=$NODE_PATH;$OPENSSL_BIN_PATH;%PATH%$\r$\n'
+    FileWrite $9 'set "Path=$NODE_PATH;%Path%"$\r$\n'
+    FileWrite $9 'set OPENSSL_CONF=$OPENSSL_CONF$\r$\n'
+    FileWrite $9 'cd $SIGNALK_NODE_CONFIG_DIR\$\r$\n'
+    FileWrite $9 'echo "openssl req -newkey rsa:2048 -nodes -keyout ssl-key.pem -x509 -out ssl-cert.pem -days 3650 -config $TOOLS_PATH\certificate-authority-self-signing.conf"  >>$INSTDIR\$LOG_FILE$\r$\n'
+    FileWrite $9 'openssl req -newkey rsa:2048 -nodes -keyout ssl-key.pem -x509 -out ssl-cert.pem -days 3650 -config "$TOOLS_PATH\certificate-authority-self-signing.conf" 1>>$INSTDIR\$LOG_FILE 2>&1$\r$\n'
+    FileWrite $9 'if %ERRORLEVEL% neq 0 goto :ERROR$\r$\n'
+    FileWrite $9 'exit /b 0$\r$\n'
+    FileWrite $9 ':ERROR$\r$\n'
+    FileWrite $9 'echo An ERROR has occurred.$\r$\n'
+    FileWrite $9 'echo See the $INSTDIR\$LOG_FILE file$\r$\n'
+    FileWrite $9 'pause$\r$\n'
+    FileWrite $9 'exit /b 1$\r$\n'
+    FileWrite $9 '$\r$\n'
+    FileClose $9
 
     DetailPrint "Create $TOOLS_PATH\SignalK-CLI.lnk"
     CreateShortCut "$TOOLS_PATH\SignalK-CLI.lnk" "cmd" \
@@ -462,12 +470,10 @@
 
   Section "install signalk-server" SecSkInstall
     LogSet on
-    ${If} $W7_DETECTED == "1"
-      ExecWait '"$TOOLS_PATH\npm-install-serial.cmd"' $0
-      DetailPrint "npm install -g --unsafe-perm serialport@10.1.0 returned $0"
-    ${EndIf}
     ExecWait '"$TOOLS_PATH\npm-install-signalk-server.cmd"' $0
     DetailPrint "npm install -g --unsafe-perm  signalk-server returned $0"
+    ExecWait '"$TOOLS_PATH\generate-certificate.cmd"' $0
+    DetailPrint "generate-certificate returned $0"
   SectionEnd
 
   Section "Signal K as services" SecSkService
@@ -491,7 +497,7 @@
       !insertmacro CreateInternetShortcutWithIcon "$DESKTOP\SignalK-GUI.URL" "http://localhost:3000" "$TOOLS_PATH\signalk.ico" 0
     SectionEnd
 
-    Section /o "Signal K CLI" SecSignalkCli
+    Section "Signal K CLI" SecSignalkCli
       LogSet on
       DetailPrint "Create desktop shortcut 'Signal K CLI'"
       CreateShortCut "$DESKTOP\Signal K CLI.lnk" "cmd" \
