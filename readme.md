@@ -1,21 +1,20 @@
-**All in one Windows installer v1.0.0 for Signal K server node http://signalk.org/**  
+**All in one Windows installer v1.1.0 for Signal K server node http://signalk.org/**  
   
 ___  
 # Prerequisite  
 - Internet connection during setup process  
-- **If you have already installed Signal K** with a previous version of the installer with a version of NodeJS lower than 16,  
+- **If you have already installed Signal K** with a previous version of the installer with a version of NodeJS lower than 18,  
 you will see a windows like this:  
 ![Install-SelectDir](screenshots/Install-CheckNode.png)  
 Please see [Upgrade NodeJS](#upgrade-nodejs) before !  
 - **If your current OS version is lower than Windows 10**,  
-NodeJS 12 will be installed instead of NodeJS 16 with limited Signal K server support ( Windows 7 is end of life ).
+Operating System version prior to Windows 10 are no longer supported with recent versions of Signal K server.
   
 # What's provide with this installer  
 - The latest version of the Signal K server downloaded during installation.  
-- NodeJS 16.13.2 ( downloaded from https://nodejs.org/dist/v16.13.2/ during installation).  
-**If your current OS version is lower than Windows 10**, NodeJS 12 only will be install (https://nodejs.org/download/release/v12.22.9/)  
-- openssl 1.1.1h ( from https://slproweb.com/products/Win32OpenSSL.html ).  
-- support of X64 and X86 Windows version (Windows 10 X64 and Windows 7 X86 tested).  
+- NodeJS 18.17.1 ( downloaded from https://nodejs.org/dist/v18.17.1/ during installation).  
+- openssl 1.1.1u ( from https://slproweb.com/products/Win32OpenSSL.html ).  
+- support of X64 and X86 Windows version (Windows 10 X64).  
 - All packages are installed under a root directory. You choose your root directory at the time of installation.  
 - Signal K can start as windows service if you choose it at the time of installation.  
 - You can re-run the installer several times.  
@@ -45,8 +44,13 @@ The `Signal K as services` option is selected by default, this is the most inter
   
 - Several windows will open successively during the installation.  
 ![Install-Progress-Download-nodejs](screenshots/Install-Progress-Download-nodejs.png)  
-![Install-Progress-NPM-SignalK](screenshots/Install-Progress-NPM-SignalK.png)  
 ![Install-Progress-NPM-node-windows](screenshots/Install-Progress-NPM-node-windows.png)  
+![Install-Progress-NPM-SignalK](screenshots/Install-Progress-NPM-SignalK.png)  
+![Install-Progress-openssl-certificate](screenshots/Install-Progress-openssl-certificate.png)  
+  
+- To simplify implementation of the https protocol with your Signal K server, a auto-signed certificat is generated at the installation time.  
+If you enable ssl mode in the server, your web browser will alert you with the indication of an insecure connection.  
+It's not ideal solution but at least it won't lock your Signal K server if you want to try the ssl mode.  
   
 - The `Signal K as services` will bring up 3 message boxes asking permission to install the Windows service.  
 Answer with `OK`.  
@@ -99,18 +103,19 @@ Or ask for support at http://slack-invite.signalk.org/ in channel #support-windo
 - `stop-signalk-server-services.cmd` stop the Signal K service, you must `Run as administrator` this script.  
 - `remove-signalk-server-services.cmd` remove the Signal K windows service, use this before delete the root directory. You must `Run as administrator` this script.  
 - `create-signalk-server-services.cmd` create the Signal K windows service if you didn't choose it at installation. Cannot be re-run if `tools\daemon` directory exist. You must `Run as administrator` this script.  
+- `generate-certificat.cmd` generates a self-signed certificate for the Signal K server in https mode.  
   
 # Upgrade NodeJS  
-Since the installer in version 1.0.0, NodeJS is provided in version 16.  
-If you have already installed Signal K with a previous version (with NodeJS version 10),  
+Since the installer in version 1.1.0, NodeJS is provided in version 18.  
+If you've already installed Signal K with an earlier version (e.g. NodeJS 10, 12 or 16),  
 it is recommended to make a new installation and then restore the configuration of your Signal K server later.  
 - Stop your Signal K server `stop-signalk-server-services.cmd`.  
 - Remove the Signal K service `remove-signalk-server-services.cmd`.  
 - Close all windows related to signal K.  
-- Rename your Signal K root directory: e.g. `c:\signalk` to `c:\signalk10`.  
+- Rename your Signal K root directory: e.g. `c:\signalk` to `c:\signalk-old`.  
 This way, you will keep your Signal K server configuration in a safe place.  
 You can also `Backup` your Signal K server configuration in GUI server: `Server` then `Backup/Restore`.  
-See also the tips here, about plugin compatibility: [Updating to Node.js-16](https://github.com/SignalK/signalk-server/wiki/Updating-to-Node.js-16)
+See also the tips here, about plugin compatibility: [Installing and Updating Node.js](https://github.com/SignalK/signalk-server/wiki/Installing-and-Updating-Node.js)
 - Start installer and install Signal K in the original directory: e.g. `c:\signalk`.  
 - Start the Signal K server and check first without any plugins.  
 - If everything is OK, reinstall your plugins, restore your previous configuration with the `Backup/Restore` function  

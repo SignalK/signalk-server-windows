@@ -1,0 +1,1 @@
+This is the settings directory of Signal K
