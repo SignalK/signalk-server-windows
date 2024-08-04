@@ -13,7 +13,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "1.1.0"
+  !define INST_VERSION "1.2.0"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -58,7 +58,6 @@
   Var /GLOBAL NODE64_ORG_DIR
   Var /GLOBAL NODE86_URL
   Var /GLOBAL NODE86_ORG_DIR
-  Var /GLOBAL W7_DETECTED
   Var /GLOBAL LOG_FILE
   Var /GLOBAL NODE_INSTALLED
   Var /GLOBAL NODE_INSTALL
@@ -66,7 +65,7 @@
   Var /GLOBAL NODE_SHORT_VERSION
   Var /GLOBAL NODE_VERSION
   Var /GLOBAL SIGNALK_NODE_CONFIG_DIR
-  
+
   Function SetGlobalVars
     LogSet on
     StrCpy $USERPROFILE $INSTDIR\signalkhome
@@ -85,8 +84,6 @@
       StrCpy $NODE86_ORG_DIR 'node-v18.17.1-win-x86'
       StrCpy $NODE_VERSION 'v18.17.1'
       StrCpy $NODE_SHORT_VERSION 'v18'
-    ${Else}
-      StrCpy $W7_DETECTED '1'
     ${EndIf}
   FunctionEnd
 
@@ -99,19 +96,6 @@
     WriteINIStr "${FILEPATH}" "{000214A0-0000-0000-C000-000000000046}" "Prop3" "19,2"
   !macroend
 
-;======================================================
-  Function .onInit
-    SetOutPath $INSTDIR
-    LogSet on
-    SetDetailsView show
-    LogText "Signal K installer version: ${INST_VERSION}"
-    ${IfNot} ${AtLeastWin10}
-      MessageBox MB_ICONEXCLAMATION|MB_OK "Your current version of Windows is lower than Windows 10,$\nOperating System version prior to Windows 10 are no longer supported with recent versions of Signal K server. "
-      LogText "Windows version < 10 detected, installation cancelled "
-      Abort
-    ${EndIf}
-    LogSet off
-  FunctionEnd
 ;======================================================
   Function GenToolsFiles
     StrCpy $0 "$INSTDIR"
@@ -376,6 +360,20 @@
     !insertmacro CreateInternetShortcutWithIcon "$TOOLS_PATH\SignalK GUI.URL" "http://localhost:3000" "$TOOLS_PATH\signalk.ico" 0
   FunctionEnd
 ;======================================================
+  Section "Visual C++ Runtime" SecVCruntime64
+;    SectionIn RO
+    LogSet on
+    SetDetailsView show
+    SetOutPath $INSTDIR
+    File /r ..\target\VC_redist.x64.exe
+    DetailPrint "Extract VC_redist.x64.exe to $INSTDIR"
+    ClearErrors
+    ExecWait "$INSTDIR\vc_redist.x64.exe" $0
+    ClearErrors
+    Delete "$INSTDIR\vc_redist.x64.exe"
+    ClearErrors
+  SectionEnd
+
   Section "Extract nodejs" SecExtractJS
     LogSet on
     SetDetailsView show
@@ -508,6 +506,7 @@ SectionGroupEnd
 
 ;======================================================
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecVCruntime64}  "Install Microsoft redistributable VC++ runtime files (required for OpenSSL)"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecExtractJS}    "Download and extract node js binary and library, mandatory for running Signal K (Internet access required)"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecExtractSSL}   "Extract OpenSSL binary and library (mandatory for running Signal K with https)"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecTools}        "Generate startup scripts, home dir and tools for running Signal K on Windows OS (mandatory for running Signal K)"
@@ -520,6 +519,10 @@ SectionGroupEnd
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 ;======================================================
 Function .onSelChange
+  ${If} $0 == ${SecVCruntime64}
+    SectionSetFlags ${SecVCruntime64} ${SF_SELECTED}
+    Return
+  ${EndIf}
   ${If} $0 != ${SecSkService}
     Return
   ${EndIf}
@@ -584,3 +587,28 @@ Function nodejsAlertPre
   done:
   LogText "NODE_INSTALL: '$NODE_INSTALL' NODE_UPGRADE: '$NODE_UPGRADE'"
 FunctionEnd
+;======================================================
+  Function .onInit
+    SetOutPath $INSTDIR
+    LogSet on
+    SetDetailsView show
+    LogText "Signal K installer version: ${INST_VERSION}"
+    ${IfNot} ${AtLeastWin10}
+      MessageBox MB_ICONEXCLAMATION|MB_OK "Your current version of Windows is lower than Windows 10,$\nOperating System version prior to Windows 10 are no longer supported with recent versions of Signal K server. "
+      LogText "Windows version < 10 detected, installation cancelled "
+      Abort
+    ${EndIf}
+    ${If} ${RunningX64}
+      ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64" "Major"
+      ReadRegStr $1 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64" "Version"
+      ${If} $0 == 14
+        LogText "Visual Studio Runtime $1 already installed"
+        SectionSetText ${SecVCruntime64} ""
+        !insertmacro UnSelectSection ${SecVCruntime64}
+      ${Else}
+        LogText "Visual Studio Runtime 14 Not found, install now selected"
+        SectionSetFlags ${SecVCruntime64} ${SF_SELECTED}
+      ${EndIf}
+    ${EndIf}
+    LogSet off
+  FunctionEnd
