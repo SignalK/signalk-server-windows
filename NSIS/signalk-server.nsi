@@ -365,13 +365,18 @@
     LogSet on
     SetDetailsView show
     SetOutPath $INSTDIR
-    File /r ..\target\VC_redist.x64.exe
-    DetailPrint "Extract VC_redist.x64.exe to $INSTDIR"
+    File /r ..\target\wget.exe
+    DetailPrint "Extract wget.exe to $INSTDIR"
     ClearErrors
-    ExecWait "$INSTDIR\vc_redist.x64.exe" $0
-    ClearErrors
-    Delete "$INSTDIR\vc_redist.x64.exe"
-    ClearErrors
+    DetailPrint "Download VC_redist.x64.exe from https://aka.ms/vs/17/release/vc_redist.x64.exe"
+    ExecWait '"$INSTDIR\wget.exe" "--output-document=$INSTDIR\vc_redist.x64.exe" "https://aka.ms/vs/17/release/vc_redist.x64.exe"' $0
+    ${If} ${FileExists} "$INSTDIR\vc_redist.x64.exe"
+      ExecWait "$INSTDIR\vc_redist.x64.exe" $0
+      ClearErrors
+      Delete "$INSTDIR\vc_redist.x64.exe"
+      ClearErrors
+    ${EndIf}
+    Delete "$INSTDIR\wget.exe"
   SectionEnd
 
   Section "Extract nodejs" SecExtractJS
