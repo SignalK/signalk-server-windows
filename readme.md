@@ -1,4 +1,4 @@
-**All in one Windows installer v1.1.0 for Signal K server node http://signalk.org/**  
+**All in one Windows installer v1.2.0 for Signal K server node http://signalk.org/**  
   
 ___  
 # Prerequisite  
@@ -14,7 +14,8 @@ Operating System version prior to Windows 10 are no longer supported with recent
 - The latest version of the Signal K server downloaded during installation.  
 - NodeJS 18.17.1 ( downloaded from https://nodejs.org/dist/v18.17.1/ during installation).  
 - openssl 1.1.1u ( from https://slproweb.com/products/Win32OpenSSL.html ).  
-- support of X64 and X86 Windows version (Windows 10 X64).  
+- Microsoft Visual C++ 2015 - 2022 Redistributable ( downloaded from https://aka.ms/vs/17/release/vc_redist.x64.exe during installation).  
+- Support of X64 and X86 Windows version (Windows 10/11 X64).  
 - All packages are installed under a root directory. You choose your root directory at the time of installation.  
 - Signal K can start as windows service if you choose it at the time of installation.  
 - You can re-run the installer several times.  
@@ -40,6 +41,11 @@ The `Signal K as services` option is selected by default, this is the most inter
 ![Install-SelectComponents](screenshots/Install-SelectComponents.png)  
   
 - Then click `Install` button  
+If required, Microsoft Visual C++ Redistributable will be downloaded from the Microsoft web site and installed.  
+And if this windows appear, please accept licence terms and click on the "Install" button.  
+![Install-MSVC](screenshots/Install-MSVC.png)  
+  
+- Next step `Install` NodeJS  
 ![Install-Progress](screenshots/Install-Progress.png)  
   
 - Several windows will open successively during the installation.  
@@ -65,7 +71,7 @@ If you have select `Desktop shortcuts`, you will find at least 1 icons on your d
   
 - `Start Signal K Service` icon will start the Signal K service, you must `Run as administrator` this icon.  
 If you don't want to have to select every time `Run as Administrator`, in properties of the shortcut, you have a options button `Advanced...`, click and then select `Run as administrator`.  
-After that, You will just have to answer `Yes` on the UAC (User Access Control) question when you clic on this icon.  
+After that, You will just have to answer `Yes` on the UAC (User Access Control) question when you click on this icon.  
 - `SignalK-GUI` icon open the web GUI of Signal K server in your web browser.  
 - `Signal K CLI` icon will open a command line windows with environment prepared for running Signal K.  
 This shortcut is most for advanced users.  

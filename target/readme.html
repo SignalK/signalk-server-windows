@@ -15,7 +15,7 @@ td, h1, h2, h3, h4, h5, p, ul, ol, li {
   </head>
   <body>
     <p>
-      <strong>All in one Windows installer v1.1.0 for Signal K server node <a href="http://signalk.org/">http://signalk.org/</a></strong>
+      <strong>All in one Windows installer v1.2.0 for Signal K server node <a href="http://signalk.org/">http://signalk.org/</a></strong>
     </p>
     <hr />
     <h1 id="prerequisite">Prerequisite</h1>
@@ -34,7 +34,8 @@ Operating System version prior to Windows 10 are no longer supported with recent
       <li>The latest version of the Signal K server downloaded during installation.</li>
       <li>NodeJS 18.17.1 ( downloaded from <a href="https://nodejs.org/dist/v18.17.1/">https://nodejs.org/dist/v18.17.1/</a> during installation).</li>
       <li>openssl 1.1.1u ( from <a href="https://slproweb.com/products/Win32OpenSSL.html">https://slproweb.com/products/Win32OpenSSL.html</a> ).</li>
-      <li>support of X64 and X86 Windows version (Windows 10 X64).</li>
+      <li>Microsoft Visual C++ 2015 - 2022 Redistributable ( downloaded from <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe">https://aka.ms/vs/17/release/vc_redist.x64.exe</a> during installation).</li>
+      <li>Support of X64 and X86 Windows version (Windows 10/11 X64).</li>
       <li>All packages are installed under a root directory. You choose your root directory at the time of installation.</li>
       <li>Signal K can start as windows service if you choose it at the time of installation.</li>
       <li>You can re-run the installer several times.</li>
@@ -64,7 +65,12 @@ Instead, choose <code>c:\signalk</code> or <code>d:\signalk</code>.<br /><img sr
 The <code>Signal K as services</code> option is selected by default, this is the most interesting option for all users. If you deselect this option, you will have to keep a Windows command line open to run the server.<br /><img src="screenshots/Install-SelectComponents.png" alt="Install-SelectComponents" /></p>
       </li>
       <li>
-        <p>Then click <code>Install</code> button<br /><img src="screenshots/Install-Progress.png" alt="Install-Progress" /></p>
+        <p>Then click <code>Install</code> button<br />
+If required, Microsoft Visual C++ Redistributable will be downloaded from the Microsoft web site and installed.<br />
+And if this windows appear, please accept licence terms and click on the "Install" button.<br /><img src="screenshots/Install-MSVC.png" alt="Install-MSVC" /></p>
+      </li>
+      <li>
+        <p>Next step <code>Install</code> NodeJS<br /><img src="screenshots/Install-Progress.png" alt="Install-Progress" /></p>
       </li>
       <li>
         <p>Several windows will open successively during the installation.<br /><img src="screenshots/Install-Progress-Download-nodejs.png" alt="Install-Progress-Download-nodejs" /><br /><img src="screenshots/Install-Progress-NPM-node-windows.png" alt="Install-Progress-NPM-node-windows" /><br /><img src="screenshots/Install-Progress-NPM-SignalK.png" alt="Install-Progress-NPM-SignalK" /><br /><img src="screenshots/Install-Progress-openssl-certificate.png" alt="Install-Progress-openssl-certificate" /></p>
@@ -89,7 +95,7 @@ If you have select <code>Desktop shortcuts</code>, you will find at least 1 icon
       <li>
         <code>Start Signal K Service</code> icon will start the Signal K service, you must <code>Run as administrator</code> this icon.<br />
 If you don't want to have to select every time <code>Run as Administrator</code>, in properties of the shortcut, you have a options button <code>Advanced...</code>, click and then select <code>Run as administrator</code>.<br />
-After that, You will just have to answer <code>Yes</code> on the UAC (User Access Control) question when you clic on this icon.</li>
+After that, You will just have to answer <code>Yes</code> on the UAC (User Access Control) question when you click on this icon.</li>
       <li>
         <code>SignalK-GUI</code> icon open the web GUI of Signal K server in your web browser.</li>
       <li>
