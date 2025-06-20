@@ -13,7 +13,7 @@
   !include "MUI2.nsh"
 ;======================================================
 ;General
-  !define INST_VERSION "1.2.0"
+  !define INST_VERSION "1.3.0"
   BrandingText "Signal K from http://signalk.org/"
   Name "Signal K installer ${INST_VERSION}"
   OutFile "..\output\signalk-server-setup-${INST_VERSION}.exe"
@@ -78,12 +78,12 @@
     StrCpy $SIGNALK_NODE_CONFIG_DIR '$USERPROFILE\.signalk'
 
     ${If} ${AtLeastWin10}
-      StrCpy $NODE64_URL 'https://nodejs.org/dist/v18.17.1/node-v18.17.1-win-x64.zip'
-      StrCpy $NODE86_URL 'https://nodejs.org/dist/v18.17.1/node-v18.17.1-win-x86.zip'
-      StrCpy $NODE64_ORG_DIR 'node-v18.17.1-win-x64'
-      StrCpy $NODE86_ORG_DIR 'node-v18.17.1-win-x86'
-      StrCpy $NODE_VERSION 'v18.17.1'
-      StrCpy $NODE_SHORT_VERSION 'v18'
+      StrCpy $NODE64_URL 'https://nodejs.org/dist/v22.16.0/node-v22.16.0-win-x64.zip'
+      StrCpy $NODE86_URL 'https://nodejs.org/dist/v22.16.0/node-v22.16.0-win-x86.zip'
+      StrCpy $NODE64_ORG_DIR 'node-v22.16.0-win-x64'
+      StrCpy $NODE86_ORG_DIR 'node-v22.16.0-win-x86'
+      StrCpy $NODE_VERSION 'v22.16.0'
+      StrCpy $NODE_SHORT_VERSION 'v22'
     ${EndIf}
   FunctionEnd
 

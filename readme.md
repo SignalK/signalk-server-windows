@@ -1,9 +1,9 @@
-**All in one Windows installer v1.2.0 for Signal K server node http://signalk.org/**  
+**All in one Windows installer v1.3.0 for Signal K server node http://signalk.org/**  
   
 ___  
 # Prerequisite  
 - Internet connection during setup process  
-- **If you have already installed Signal K** with a previous version of the installer with a version of NodeJS lower than 18,  
+- **If you have already installed Signal K** with a previous version of the installer with a version of NodeJS lower than 22,  
 you will see a windows like this:  
 ![Install-SelectDir](screenshots/Install-CheckNode.png)  
 Please see [Upgrade NodeJS](#upgrade-nodejs) before !  
@@ -12,7 +12,7 @@ Operating System version prior to Windows 10 are no longer supported with recent
   
 # What's provide with this installer  
 - The latest version of the Signal K server downloaded during installation.  
-- NodeJS 18.17.1 ( downloaded from https://nodejs.org/dist/v18.17.1/ during installation).  
+- NodeJS 22.16.0 ( downloaded from https://nodejs.org/dist/v22.16.0/ during installation).  
 - openssl 1.1.1u ( from https://slproweb.com/products/Win32OpenSSL.html ).  
 - Microsoft Visual C++ 2015 - 2022 Redistributable ( downloaded from https://aka.ms/vs/17/release/vc_redist.x64.exe during installation).  
 - Support of X64 and X86 Windows version (Windows 10/11 X64).  
@@ -112,8 +112,8 @@ Or ask for support at http://slack-invite.signalk.org/ in channel #support-windo
 - `generate-certificat.cmd` generates a self-signed certificate for the Signal K server in https mode.  
   
 # Upgrade NodeJS  
-Since the installer in version 1.1.0, NodeJS is provided in version 18.  
-If you've already installed Signal K with an earlier version (e.g. NodeJS 10, 12 or 16),  
+Since the installer in version 1.3.0, NodeJS is provided in version 22.  
+If you've already installed Signal K with an earlier version (e.g. NodeJS 10, 12, 16 or 18),  
 it is recommended to make a new installation and then restore the configuration of your Signal K server later.  
 - Stop your Signal K server `stop-signalk-server-services.cmd`.  
 - Remove the Signal K service `remove-signalk-server-services.cmd`.  
