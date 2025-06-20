@@ -90,7 +90,7 @@ This command will stop the Windows service and restart it with user security ena
 Then reopen you web browser at URL: http://localhost:3000 and enter your admin account.  
   
 Then check out the website:  http://signalk.org/ or https://github.com/SignalK/signalk-server-node for more informations.  
-Or ask for support at http://slack-invite.signalk.org/ in channel #support-windows
+Or ask for support at https://discord.com/invite/uuZrwz4dCS in `questions` channel
   
 # Software structure  
 + `c:\signalk` This is the root directory that you choosed at install. All components are under this root directory.  
